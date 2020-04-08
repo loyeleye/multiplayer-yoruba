@@ -17,13 +17,10 @@ const app = express();
 const clientPath = `${__dirname}/../client`;
 
 const PORT = process.env.PORT || 3000;
-const INDEX = clientPath + '/index.html';
 
-const server = express()
-    .use((req, res) => res.sendFile(INDEX))
-    .listen(PORT, () => console.log(`Listening on ${PORT}`));
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-const io = socketio(server);
+const io = socketio(app);
 
 app.set('port', PORT);
 app.set('views', './views');
