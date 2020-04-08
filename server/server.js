@@ -18,9 +18,9 @@ const clientPath = `${__dirname}/../client`;
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => console.log(`Listening on ${PORT}`));
-
 const server = http.createServer(app);
+server.listen(PORT, () => console.log(`Listening on ${PORT}`));
+
 const io = socketio(server);
 
 app.set('port', PORT);
