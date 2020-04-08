@@ -20,7 +20,8 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-const io = socketio(app);
+const server = http.createServer(app);
+const io = socketio(server);
 
 app.set('port', PORT);
 app.set('views', './views');
