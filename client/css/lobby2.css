@@ -102,3 +102,9 @@ footer {
 .collapsible-body {
     background: radial-gradient(white, lightblue);
 }
+
+@media only screen and (max-width: 992px) {
+    #brand-logo-icon {
+        display: none;
+    }
+}

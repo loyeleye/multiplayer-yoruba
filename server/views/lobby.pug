@@ -17,7 +17,7 @@ html(lang="en")
                     nav
                         div(class="nav-wrapper grey lighten-3")
                             a(href="#" class="brand-logo") Game Lobby
-                                i(class="large material-icons left") chevron_right
+                                i(id="brand-logo-icon" class="large material-icons left") chevron_right
 
                             ul(id="nav-mobile" class="right hide-on-med-and-down")
                                 li
@@ -82,6 +82,7 @@ html(lang="en")
                 each c in [1,2,3,4,5,6,7,8,9,10]
                     li
                 div(style="display:none" id="identifier") #{pName}
+                div(style="display:none" id="password") #{lPass}
             div(class="grid-container")
                 main(role="main" class="grid-left")
                     section(class="msger box1")

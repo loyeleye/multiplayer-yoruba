@@ -22,6 +22,8 @@ const BOT_PHRASES = ['"{0}"? I believe that is "{1}" in English.',
 // GRID
 let grid = null;
 let board = null;
+let fitScreen = true;
+let actionInProgress = false;
 const flip_front = "dw-flp__pnl dw-flp__pnl--frnt tx--white bd--white tx--center bg--dkgreen";
 const flip_back = "dw-flp__pnl dw-flp__pnl--bck bd--white tx--white tx--center bg--black";
 
@@ -177,7 +179,7 @@ function createGrid(size) {
         grid[i] = new Array(size);
         for (let j = 0; j < grid.length; j++) {
             let panelFlip = document.createElement("div");
-            panelFlip.style.height = (1600 / size).toString() + 'px';
+            panelFlip.style.height = (90 / size).toString() + 'vh';
             panelFlip.className = "dw-pnl dw-flp";
             panelFlip.id = "item." + i + "." + j;
             panelFlip.style.setProperty("grid-column", i+1);
@@ -231,7 +233,8 @@ function flipCard(params) {
             classes: `rounded ${color}`});
     }
 
-    backPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (params.frenzyEnabled === false) backPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
     p.innerHTML = params.word;
     p.classList.remove('hide');
     contentPanel.classList.remove("dw-flp__cntnt");
@@ -446,4 +449,25 @@ function delayedBotMessage(message, delay = 1000) {
     setTimeout(() => {
         appendMessage(BOT_NAME, BOT_IMG, "left", message);
     }, delay);
+}
+
+async function toggleTileSize() {
+    if (actionInProgress) {
+        toastAlert(`Please wait for "Toggle Tile Size" to finish!`);
+    }
+    actionInProgress = true;
+    let newSize;
+    fitScreen = !fitScreen;
+    if (fitScreen)
+        newSize = (90 / grid.length).toString() + 'vh';
+    else
+        newSize = (100 / grid.length).toString() + 'vw';
+    for (let i = 0; i < grid.length; i++) {
+        for (let j = 0; j < grid[i].length; j++) {
+            grid[i][j].style.height = newSize;
+        }
+    }
+    sleep(500);
+    toastAlert('Board updated!');
+    actionInProgress = false;
 }

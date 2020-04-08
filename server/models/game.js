@@ -626,6 +626,9 @@ function gameEvents(sock, lobbyService) {
                 sock.broadcast.to(`${game.id}`).emit('response-flip',params);
                 params.isActivePlayer = true;
                 sock.emit('response-flip', params);
+                if (params.englishMeaning !== null) {
+                    game.toastAlert(`"${params.word}": "${params.englishMeaning}"`);
+                }
                 if (params.id2 !== null) {
                     params.isActivePlayer = false;
                     if (params.match) {

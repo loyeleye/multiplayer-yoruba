@@ -5,7 +5,7 @@ const Game = require('./game').Game;
 const MAX_PLAYERS = 8;
 
 class Lobby {
-    constructor() {
+    constructor(password = null) {
         this.id = uuidv4();
         this.players = {};
         this.votesToStart = new Set();
@@ -15,6 +15,7 @@ class Lobby {
         this.settings.teams.push(new Team(3));
         this.settings.teams.push(new Team(4));
         this.game = null;
+        this.password = password;
     }
 
     addPlayer(name, inLobby = true) {
@@ -137,10 +138,22 @@ class Player {
 class LobbyService {
     constructor() {
         this.lobbyTracker = {};
+        this.privateLobbies = {};
         this.refillLobbyQueue = [];
         this.sockets = {};
         this.createNewLobby();
         this.activeGames = {};
+    }
+
+    getPrivateLobby(password) {
+        if (this.privateLobbies.hasOwnProperty(password)) {
+            return this.privateLobbies[password];
+        } else {
+            let lobby = new Lobby(password);
+            this.lobbyTracker[lobby.id] = lobby;
+            this.privateLobbies[password] = lobby;
+            return lobby;
+        }
     }
 
     createNewLobby() {
@@ -155,7 +168,6 @@ class LobbyService {
 
     addPlayer(name) {
         let ret = this.activeLobby.addPlayer(name);
-        console.log(ret);
         if (ret === 'full') {
             this.refillOrCreateLobby();
             let ret = this.activeLobby.addPlayer(name);

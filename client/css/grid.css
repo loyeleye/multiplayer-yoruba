@@ -1,5 +1,6 @@
 .grid-container {
     display: grid;
+    height: 90vh;
 }
 
 .grid-element {
@@ -412,8 +413,9 @@ img.dw-flp__pnl {
     -webkit-background-clip: text;
     font-weight: bold;
     font-family: arial, helvetica;
-    margin: 50px auto;
+    margin: 2vh auto;
     text-align: center;
+    height: 6vh;
 }
 .bg--image {
     background: url("https://i.ytimg.com/vi/gjbzp1MUQrg/maxresdefault.jpg");

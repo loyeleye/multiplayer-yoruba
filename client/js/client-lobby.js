@@ -52,7 +52,7 @@ sock.on('connect-alert', (params) => {
     refreshPlayerList(params.players);
 });
 sock.on('request-connect', () => {
-    sock.emit('response-connect', PERSON_NAME);
+    sock.emit('response-connect', {name: PERSON_NAME, password: LOBBY_CODE});
 });
 sock.on('update-lobbylist', (players) => {
     refreshPlayerList(players);
@@ -96,6 +96,7 @@ const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
 const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
 const BOT_NAME = "Coach Bot";
 const PERSON_NAME = document.querySelector("#identifier").innerText;
+const LOBBY_CODE = document.querySelector("#password").innerText;
 
 msgerForm.addEventListener("submit", event => {
   event.preventDefault();

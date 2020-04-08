@@ -52,27 +52,45 @@ app.post('/lobby', (req, res) => {
         res.render('index', {message: msg});
         return;
     }
-    let addAttempt = lobbyService.addPlayer(req.body.name);
-    if (addAttempt === 'collision') {
 
-        let msg = `There is already a player with the name "${req.body.name}" in the lobby! Please choose a different name to join this lobby.`;
-        res.render('index', {message: msg});
-        return;
+    let lobby, password;
+
+    if (typeof req.body.password !== 'undefined') {
+        password = req.body.password;
+        lobby = lobbyService.getPrivateLobby(password);
+        let addAttempt = lobby.addPlayer(req.body.name);
+        if (addAttempt === 'collision') {
+            let msg = `There is already a player with the name "${req.body.name}" in the lobby! Please choose a different name to join this lobby.`;
+            res.render('index', {message: msg});
+            return;
+        } else if (addAttempt === 'full') {
+            let msg = `This lobby is already full!`;
+            res.render('index', {message: msg});
+            return;
+        }
+    } else {
+        let addAttempt = lobbyService.addPlayer(req.body.name);
+        if (addAttempt === 'collision') {
+            let msg = `There is already a player with the name "${req.body.name}" in the lobby! Please choose a different name to join this lobby.`;
+            res.render('index', {message: msg});
+            return;
+        }
+        lobby = lobbyService.activeLobby;
+        password = "";
     }
-
-    const lobby = lobbyService.activeLobby;
-
-    res.render('lobby', {lobbyList: lobbyService.getPlayers(),
-                            lobbyId: lobbyService.getLobbyId(),
-                            pName: req.body.name,
-                            modeTitle: lobby.settings.getMode(),
-                            modeDesc: lobby.settings.getModeDesc(),
-                            boardSize: lobby.settings.getBoardSize(),
-                            teamTitle: lobby.settings.getTeamMode(),
-                            teamModeDesc: lobby.settings.getTeamModeDesc(),
-                            teamModeFFA: lobby.settings.ffa,
-                            currentThemes: lobby.settings.categories,
-                            allThemes: Object.keys(dict['byCategory'])});
+    console.log(lobby);
+    res.render('lobby', {lobbyList: lobby.getPlayers(),
+        lobbyId: lobby.id,
+        pName: req.body.name,
+        lPass: password,
+        modeTitle: lobby.settings.getMode(),
+        modeDesc: lobby.settings.getModeDesc(),
+        boardSize: lobby.settings.getBoardSize(),
+        teamTitle: lobby.settings.getTeamMode(),
+        teamModeDesc: lobby.settings.getTeamModeDesc(),
+        teamModeFFA: lobby.settings.ffa,
+        currentThemes: lobby.settings.categories,
+        allThemes: Object.keys(dict['byCategory'])});
 });
 
 app.get('/game', (req, res) => {
@@ -142,17 +160,25 @@ io.on('connection', (sock) => {
         });
     });
 
-    sock.on('response-connect', (name) => {
+    sock.on('response-connect', (params) => {
         try {
-            lobbyService.getPlayerFromActiveLobby(name).setSocket(sock);
-            sock.join(`${lobbyService.activeLobby.id}`);
-            io.to(`${lobbyService.activeLobby.id}`).emit('connect-alert', {
+            let name = params.name;
+            let lobby;
+            if (params.password !== "") {
+                lobby = lobbyService.getPrivateLobby(params.password);
+            } else {
+                lobby = lobbyService.activeLobby;
+            }
+            lobby.players[name].setSocket(sock);
+            sock.join(`${lobby.id}`);
+            io.to(`${lobby.id}`).emit('connect-alert', {
                 alert: `${name} has joined the lobby.`,
-                players: lobbyService.activeLobby.getPlayerTeams()
+                players: lobby.getPlayerTeams()
             });
-            console.log(`${name} connected to lobby ${lobbyService.activeLobby.id} - sock# ${sock.id}`);
-        } catch {
-            console.log('response-connect');
+            let pass = params.password !== "" ? ` (with password: "${params.password}")` : "";
+            console.log(`${name} connected to lobby ${lobby.id}${pass} - sock# ${sock.id}`);
+        } catch(err) {
+            console.warn('response-connect error');
             sock.emit('dc');
         }
     });
@@ -181,6 +207,7 @@ io.on('connection', (sock) => {
             io.to(`${game.id}`).emit('connect-alert', `${credentials.name} joined the game.`);
             console.log(`${credentials.name} connected to game ${credentials.id} - sock# ${sock.id}`);
         } catch (err) {
+            console.warn('game-connect error');
             sock.emit('dc');
         }
     });
