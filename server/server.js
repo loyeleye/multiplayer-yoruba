@@ -2,15 +2,15 @@ const http = require('http');
 const express = require('express');
 const session = require('cookie-session');
 const socketio = require('socket.io');
-const lobbyService = require('./models/lobby');
-const gameEvents = require('./models/game').Events;
+const lobbyService = require('./server/models/lobby');
+const gameEvents = require('./server/models/game').Events;
 const bent = require('bent');
 // const dict = require('./models/dictionary');
 // const dictionary = new dict.Dictionary();
 // const materialize = require('materialize');
-const GameSettings = require('./models/game').GameSettings;
+const GameSettings = require('./server/models/game').GameSettings;
 
-const dict = require('./models/dictionary');
+const dict = require('./server/models/dictionary');
 const allCategories = Object.keys(dict['byCategory']);
 const app = express();
 
@@ -24,7 +24,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 app.set('port', PORT);
-app.set('views', './views');
+app.set('views', './server/views');
 app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
