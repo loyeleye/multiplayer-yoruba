@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Recall Yoruba</title>
+    <link rel="stylesheet" type="text/css" href="css/grid.css">
+    <link rel="stylesheet" type="text/css" href="css/gamechat.css">
+    <link rel="stylesheet" type="text/css" href="css/gridmenu.css">
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body class="bg--green bg--image" onload="createGrid(16)">
+<ul id="slide-out" class="sidenav">
+    <!--<li><div class="user-view">-->
+        <!--<div class="background">-->
+            <!--<img src="img/lagos.jpg">-->
+        <!--</div>-->
+        <!--<a><img class="circle" src="img/team.svg"></a>-->
+        <!--<a href="#"><span class="white-text name">John Doe (Red Team) - 50 / 50</span></a>-->
+    <!--</div></li>-->
+    <li>
+        <div class="row">
+            <div class="col s12">
+                <ul class="tabs" style="background-color: rgba(0,0,0,0)">
+                    <li class="tab col s3"><a href="#test1"><i class="material-icons">star</i></a></li>
+                    <li class="tab col s3"><a class="active" href="#test2"><i class="material-icons">repeat</i></a></li>
+                    <li class="tab col s3 adisabled"><a href="#test3"><i class="material-icons">people</i></a></li>
+                </ul>
+            </div>
+            <div id="test1" class="col s12">
+                <a class="subheader">Score</a>
+                <ul id="scores" class="playerlist">
+                    <li><a href="#!"><i class="material-icons red-text">people</i>John Doe</a></li>
+                    <li><a href="#!"><i class="material-icons blue-text">people</i>Mary Sue</a></li>
+                    <li><a href="#!"><i class="material-icons yellow-text">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons brown-text">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons pink-text text-accent-1">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons cyan-text">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons orange-text">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons purple-text">people</i>Ron Paul</a></li>
+                </ul>
+            </div>
+            <div id="test2" class="col s12">
+                <a class="subheader">Turn Order</a>
+                <ul id="turns" class="playerlist">
+                    <li><a href="#!"><i class="material-icons red-text">people</i>John Doe</a></li>
+                    <li><a href="#!"><i class="material-icons blue-text">people</i>Mary Sue</a></li>
+                    <li><a href="#!"><i class="material-icons yellow-text">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons brown-text">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons pink-text text-accent-1">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons cyan-text">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons orange-text">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons purple-text">people</i>Ron Paul</a></li>
+                </ul>
+            </div>
+            <div id="test3" class="col s12">
+                <a class="subheader">Teams</a>
+                <ul id="teams" class="playerlist">
+                    <li><a href="#!"><i class="material-icons red-text">people</i>John Doe</a></li>
+                    <li><a href="#!"><i class="material-icons blue-text">people</i>Mary Sue</a></li>
+                    <li><a href="#!"><i class="material-icons yellow-text">people</i>Ron Paul</a></li>
+                    <li><a href="#!"><i class="material-icons brown-text">people</i>Ron Paul</a></li>
+                </ul>
+            </div>
+        </div>
+    </li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">Chat</a></li>
+    <li class="grid-container">
+        <div class="chatBox">
+            <section class="msger box1">
+                <main class="msger-chat">
+                    <div class="msg left-msg">
+                        <div class="msg-img" style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)"></div>
+
+                        <div class="msg-bubble">
+                            <div class="msg-info">
+                                <div class="msg-info-name">BOT</div>
+                                <div class="msg-info-time">12:45</div>
+                            </div>
+
+                            <div class="msg-text">
+                                Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="msg right-msg">
+                        <div
+                                class="msg-img"
+                                style="background-image: url(https://image.flaticon.com/icons/svg/145/145867.svg)"
+                        ></div>
+
+                        <div class="msg-bubble">
+                            <div class="msg-info">
+                                <div class="msg-info-name">Sajad</div>
+                                <div class="msg-info-time">12:46</div>
+                            </div>
+
+                            <div class="msg-text">
+                                You can change your name in JS section!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="msg">
+                        <div class="msg-bubble msg-alert msg-info">
+                            <i class="small material-icons">info</i> You joined the lobby.
+                        </div>
+                    </div>
+                </main>
+
+                <form class="msger-inputarea">
+                    <input type="text" class="msger-input" placeholder="Enter your message...">
+                    <button type="submit" class="msger-send-btn">Send</button>
+                </form>
+            </section>
+        </div>
+        <br>
+    </li>
+</ul>
+<div class="fixed-action-btn" style="right: auto; margin-left: 3%; margin-bottom: 3%">
+    <a class="btn-floating btn-large waves-effect waves-light grey sidenav-trigger" data-target="slide-out"><i class="material-icons">comment</i></a>
+</div>
+<div id="confetti">
+    <h1 class="knockout">Recall: Yorùbá Edition</h1>
+    <div id="board" class="grid-container">
+    </div>
+</div>
+
+
+<script type="text/javascript" src="js/game-engine.js" charset="utf-8"></script>
+<script type="text/javascript" src="js/materialize.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(elems);
+        var elems = document.querySelectorAll('.tabs');
+        var instance = M.Tabs.init(elems);
+    });
+</script>
+</body>
+</html>

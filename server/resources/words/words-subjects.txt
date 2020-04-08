@@ -1,0 +1,13 @@
+Subjects
+Subject,[_A-][.s_][_a-]y[_a-]n-[.e-]k[.o+]
+Mathematics,[_i-][.s_]ir[_o-]
+English,[_I+]ng[_i+]l[_i+][.s_][_i-]
+Economics,[.E-]k[.o+] [_e-]t[_o-]-[.o_]r[.o-]
+Geometry,[.E-]k[.o+] il[.e-]-w[_i+]w[.o-]n
+Biology,[.E-]k[.o+] [.e-]d[_a+]-on[_i+]y[_e-]
+Physics,[.E-]k[.o+] [.e-]d[_a+]
+History,[.E-]k[.o+] [_i-]t[_a-]n-[_a-]k[.o_][.o+]l[.e-]
+Geography,[.E-]k[.o+] il[.e-]-ay[_e+]
+Religious Studies,[.E-]k[.o+] n[_i+]a [_i-]gb[_a-]gb[.o+]
+Chemistry,[.E-]k[.o+]-[.e-]l[_a-]
+Religion,R[_i-]l[_i+]j[_i-][.o-]n[_u-]

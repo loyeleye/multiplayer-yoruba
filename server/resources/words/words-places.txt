@@ -1,0 +1,5 @@
+Places
+School,Sk[_u+][_u-]l[_u-]
+Market,[.O-]j[_a-]
+Shop,[.S_][.o+][.o-]b[+u-]
+Store,St[.o+][.o-]

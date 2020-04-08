@@ -1,0 +1,289 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        title Recall Yoruba
+        link(rel="stylesheet" type="text/css" href="css/lobby2.css")
+        link(rel="stylesheet" type="text/css" href="css/animated.css")
+        link(rel="stylesheet" type="text/css" href="css/chat.css")
+        link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
+        link(rel="stylesheet" type="text/css" href="css/materialize.min.css" media="screen,projection")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    body(class="area")
+        div(class="container")
+            h1(class="knockout") Recall: Yorùbá Edition
+            header(class="header")
+                div(class="header-el header-el1" style="position: relative; float:right")
+                    nav
+                        div(class="nav-wrapper grey lighten-3")
+                            a(href="#" class="brand-logo") Game Lobby
+                                i(class="large material-icons left") chevron_right
+
+                            ul(id="nav-mobile" class="right hide-on-med-and-down")
+                                li
+                                    a(class="btn yellow darken-1 tooltipped dropdown-trigger" data-position="bottom" data-tooltip="Select Game Mode" data-target="mode_dropdown")
+                                        i(class="material-icons") group_work
+                                li
+                                    a(class="btn green tooltipped dropdown-trigger" data-position="bottom" data-tooltip="Select Team Mode" data-target="team_dropdown")
+                                        i(class="material-icons") group
+                                li
+                                    a(class="btn blue tooltipped dropdown-trigger" data-position="bottom" data-tooltip="Reset Themes" data-target="theme_dropdown")
+                                        i(class="material-icons") layers
+                    ul(id="mode_dropdown" class="dropdown-content")
+                        li
+                            a(id="set_mode_tutorial" class="lobby_config")
+                                i(class="material-icons left") live_help
+                                | Tutorial
+                        li
+                            a(id="set_mode_standard" class="lobby_config")
+                                i(class="material-icons left") repeat
+                                | Standard
+                        li
+                            a(id="set_mode_losers" class="lobby_config")
+                                i(class="material-icons left") repeat_one
+                                | Loser's Choice
+                        li
+                            a(id="set_mode_stealth" class="lobby_config")
+                                i(class="material-icons left") visibility_off
+                                | Stealth
+                        li
+                            a(id="set_mode_frenzy" class="lobby_config")
+                                i(class="material-icons left") report_problem
+                                | Frenzy
+                    ul(id="team_dropdown" class="dropdown-content")
+                        li
+                            a(id="set_team_ffa" class="lobby_config")
+                                i(class="material-icons") thumb_up
+                                | Free for All
+                        li
+                            a(id="set_team_teams" class="lobby_config")
+                                i(class="material-icons") thumbs_up_down
+                                | Teams
+                    ul(id="theme_dropdown" class="dropdown-content")
+                        li
+                            a(id="set_theme_all" class="lobby_config")
+                                i(class="material-icons") layers
+                                | Add All Themes
+                        li
+                            a(id="set_theme_none" class="lobby_config")
+                                i(class="material-icons") layers_clear
+                                | Clear Themes
+                div(class="fixed-action-btn header-el header-el2" style="float:right;")
+                    a(class="btn-floating btn-large grey")
+                        i(class="large material-icons tooltipped" data-position="top" data-tooltip="Change Board Size") view_comfy
+                    ul
+                        - colors = ['teal','orange','purple','blue','green','yellow darken-1', 'red']
+                        - sizes = ['16x16','14x14','12x12','10x10','8x8','6x6','4x4']
+                        - ranks = ['7','6','5','4','3','2','1']
+                        each color, index in colors
+                            li
+                                != "<a id='set_size_" + sizes[index].split('x')[0] + "' class='btn-floating " + color + " tooltipped lobby_config' data-position='top' data-tooltip='" + sizes[index] + "'><i class='material-icons'>filter_" + ranks[index] + "</i></a>"
+            ul(class="circles")
+                each c in [1,2,3,4,5,6,7,8,9,10]
+                    li
+                div(style="display:none" id="identifier") #{pName}
+            div(class="grid-container")
+                main(role="main" class="grid-left")
+                    section(class="msger box1")
+                        main(class="msger-chat")
+                        form(class="msger-inputarea")
+                            input(type="text" class="msger-input" placeholder="Enter your message...")
+                            button(type="submit" class="msger-send-btn") Send
+                div(class="grid-right")
+                    div(class="collection with-header")
+                        div(class="collection-header")
+                            h4 Players
+                        div(id="playerList")
+                            for player in lobbyList
+                                - playerid = "p_" + player
+                                a(id=playerid class='collection-item') #{player}
+            footer
+                a(class="btn tooltipped" id="startgamebtn" style="position:relative" data-position="bottom" data-tooltip="Start New Game") Start Game
+            div(class="info")
+                ul(class="collapsible")
+                    li
+                        div(class="collapsible-header")
+                            i(class="material-icons") group_work
+                            | Game Mode
+                        div(class="collapsible-body")
+                            h2(id="modeTitle") #{modeTitle}
+                            span(id="modeDesc" class="flow-text") !{modeDesc}
+                            br
+                            br
+                            a(class="waves-effect waves-light btn-large dropdown-trigger deep-purple darken-1" data-target="mode_dropdown_2") Change Game Mode
+                                i(class="material-icons left") group_work
+                ul(class="collapsible")
+                    li
+                        div(class="collapsible-header")
+                            i(class="material-icons") group
+                            | Team Mode
+                        div(class="collapsible-body")
+                            h2(id="teamTitle") #{teamTitle}
+                            span(id='teamModeDesc' class="flow-text") !{teamModeDesc}
+                            br
+                            - teamSelectDisplay = {display: teamModeFFA ? "none" : "inherit"};
+                            div(id="teamSelect" class="input-field col s12" style=teamSelectDisplay)
+                                select
+                                    option(value="" disabled selected) Choose your Team
+                                    option(value="1" ) Red
+                                        span(id="change_team_red" class="lobby_config")
+                                    option(value="2") Blue
+                                        span(id="change_team_blue" class="lobby_config")
+                                    option(value="3") Yellow
+                                        span(id="change_team_yellow" class="lobby_config")
+                                    option(value="4") Brown
+                                        span(id="change_team_brown" class="lobby_config")
+                                style.
+                                    option > img {
+                                        fill: currentColor;
+                                    }
+                            br
+                            span(id="boardSize")
+                                i Board Size: #{boardSize}
+                            br
+                            br
+                            a(class="waves-effect waves-light btn-large dropdown-trigger deep-purple darken-1" data-target="team_dropdown_2") Change Team Mode
+                                i(class="material-icons left") group
+                ul(class="collapsible")
+                    li
+                        div(class="collapsible-header")
+                            i(class="material-icons") layers
+                            | Vocabulary Themes
+                        div(class="collapsible-body")
+                            span(class="flow-text") Vocab words from the themes selected below will be used in your game:
+                            div(class="chips chips-placeholder chips-initial chips-autocomplete")
+                                input(class="chips-themes")
+                            br
+                            a(class="waves-effect waves-light btn-large dropdown-trigger deep-purple darken-1" data-target="theme_dropdown_2") Reset Themes
+                                i(class="material-icons left") layers
+                ul(id="mode_dropdown_2" class="dropdown-content")
+                    li
+                        a(id="set_mode_tutorial_2" class="lobby_config")
+                            i(class="material-icons left") live_help
+                            | Tutorial
+                    li
+                        a(id="set_mode_standard_2" class="lobby_config")
+                            i(class="material-icons left") repeat
+                            | Standard
+                    li
+                        a(id="set_mode_losers_2" class="lobby_config")
+                            i(class="material-icons left") repeat_one
+                            | Loser's Choice
+                    li
+                        a(id="set_mode_stealth_2" class="lobby_config")
+                            i(class="material-icons left") visibility_off
+                            | Stealth
+                    li
+                        a(id="set_mode_frenzy_2" class="lobby_config")
+                            i(class="material-icons left") report_problem
+                            | Frenzy
+                ul(id="team_dropdown_2" class="dropdown-content")
+                    li
+                        a(id="set_team_ffa_2" class="lobby_config")
+                            i(class="material-icons") thumb_up
+                            | Free for All
+                    li
+                        a(id="set_team_teams_2" class="lobby_config")
+                            i(class="material-icons") thumbs_up_down
+                            | Teams
+                ul(id="theme_dropdown_2" class="dropdown-content")
+                    li
+                        a(id="set_theme_all_2" class="lobby_config")
+                            i(class="material-icons") layers
+                            | Add All Themes
+                    li
+                        a(id="set_theme_none_2" class="lobby_config")
+                            i(class="material-icons") layers_clear
+                            | Clear Themes
+        script(type="text/javascript" src="/socket.io/socket.io.js")
+        script(type="text/javascript" src="js/materialize.min.js")
+        script(type="text/javascript" src="js/client-lobby.js")
+        script.
+            document.addEventListener('DOMContentLoaded', function() {
+                let initialChips = [];
+                let autoCompleteChips = {};
+                let all = !{JSON.stringify(allThemes)};
+                let current = !{JSON.stringify(currentThemes)};
+                for (let theme of all) autoCompleteChips[theme] = null;
+                for (let theme of current) initialChips.push({tag: theme});
+
+                let elems = document.querySelectorAll('.fixed-action-btn');
+                M.FloatingActionButton.init(elems, {
+                    direction: 'left',
+                    hoverEnabled: false
+                });
+                elems = document.querySelectorAll('.tooltipped');
+                M.Tooltip.init(elems);
+                elems = document.querySelectorAll('.dropdown-trigger');
+                M.Dropdown.init(elems);
+                elems = document.querySelectorAll('.collapsible');
+                M.Collapsible.init(elems);
+                elems = document.querySelectorAll('select');
+                M.FormSelect.init(elems)
+                elems = document.querySelectorAll('.chips');
+                let instances = M.Chips.init(elems, {
+                    data: initialChips,
+                    placeholder: 'Add a Theme',
+                    limit: all.length,
+                    secondaryPlaceholder: '+Theme',
+                    autocompleteOptions: {
+                        data: autoCompleteChips,
+                        limit: Infinity,
+                        minLength: 1
+                    }
+                });
+                let chipHandler = instances[0];
+                chipHandler.options.onChipAdd = function(ev, chip) {
+                    let theme = chip.innerText.replace('close', '').replace(/^\s+|\s+$/gm,'');
+                    let found = false;
+                    for (let i = 0; i < all.length; i++) {
+                        if (all[i] === theme) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        deleteTheme(chipHandler, theme);
+                        return;
+                    }
+                    const settings = ['change', 'theme', 'add', theme];
+                    sock.emit('lobby-config', settings);
+                };
+                chipHandler.options.onChipDelete = function(ev, chip) {
+                    let theme = chip.innerText.replace('close', '');
+                    const settings = ['change','theme','delete',theme];
+                    sock.emit('lobby-config', settings);
+                };
+                document.querySelector('#teamSelect select').addEventListener('change', function(ev) {
+                    let el = ev.srcElement;
+                    let colorCode = parseInt(el.options[el.selectedIndex].value);
+                    const settings = ['change','team',colorCode];
+                    sock.emit('lobby-config',settings);
+                });
+                document.getElementById("startgamebtn").onclick = function() {
+                   sock.emit('start-game',null);
+                };
+                sock.on('update-chips', function (params) {
+                    let chipHandler = M.Chips.getInstance(document.querySelector('.chips'));
+                    if (params.action === 'delete') {
+                        deleteTheme(chipHandler, params.theme);
+                    } else if (params.action === 'add') {
+                        let data = {};
+                        data.tag = params.theme;
+                        chipHandler.addChip(data);
+                    }
+                });
+                function deleteTheme(chipHandler, theme) {
+                    let themeTrimmed = theme.replace(/^\s+|\s+$/gm, '');
+                    for (let i = 0; i < chipHandler.chipsData.length; i++) {
+                        let data = chipHandler.chipsData[i];
+                        if (data.tag.replace(/^\s+|\s+$/gm, '') === themeTrimmed) {
+                            const onDelete = chipHandler.options.onChipDelete;
+                            chipHandler.options.onChipDelete = null;
+                            chipHandler.deleteChip(i);
+                            chipHandler.options.onChipDelete = onDelete;
+                            break;
+                        }
+                    }
+                }
+            });

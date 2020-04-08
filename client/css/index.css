@@ -1,0 +1,32 @@
+body {
+    min-width: 640px;
+    min-height: 480px;
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    background: #000 url("../img/lagos.jpg") no-repeat;
+}
+
+.knockout {
+    background: url(../img/coma_misti.jpg) -80px -80px;
+    color: red;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    font-weight: bold;
+    font-family: arial, helvetica, serif;
+    margin: 50px auto;
+    text-align: center;
+}
+
+input#name {
+    color: white;
+    font-size: 20px;
+}
+.center-form {
+    width: 50%;
+    margin: auto auto;
+}
+
+.tx--center {
+    margin: 0 auto;
+}

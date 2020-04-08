@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recall Yorùbá</title>
+    <link rel="stylesheet" type="text/css" href="css/lobby2.css">
+    <link type="text/css" rel="stylesheet" href="css/animated.css"/>
+    <link type="text/css" rel="stylesheet" href="css/chat.css"/>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body class="area">
+<div class="container">
+    <h1 class="knockout">Recall: Yorùbá Edition</h1>
+    <header class="header">
+        <div class="header-el header-el1" style="position: relative; float:right">
+            <nav>
+                <div class="nav-wrapper green darken-4">
+                    <a href="#" class="brand-logo"><i class="large material-icons">games</i>Game Settings</a>
+                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a class="btn yellow darken-1 tooltipped dropdown-trigger" data-position="bottom" data-tooltip="Select Game Mode" data-target="mode_dropdown"><i class="material-icons">group_work</i></a></li>
+                        <li><a class="btn green tooltipped dropdown-trigger" data-position="bottom" data-tooltip="Select Team Mode" data-target="team_dropdown"><i class="material-icons">group</i></a></li>
+                        <li><a class="btn blue tooltipped dropdown-trigger" data-position="bottom" data-tooltip="Reset Themes" data-target="theme_dropdown"><i class="material-icons">layers</i></a></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="chips">
+                <input class="custom-class">
+            </div>
+            <ul id="mode_dropdown" class="dropdown-content">
+                <li>
+                    <a href="#!"><i class="material-icons">repeat</i>Standard</a>
+                    <a href="#!"><i class="material-icons">repeat_one</i>Loser's Choice</a>
+                    <a href="#!"><i class="material-icons">visibility_off</i>Stealth</a>
+                    <a href="#!"><i class="material-icons">report_problem</i>Frenzy</a>
+                </li>
+            </ul>
+            <ul id="team_dropdown" class="dropdown-content">
+                <li>
+                    <a href="#!"><i class="material-icons">thumb_up</i>Free For All</a>
+                    <a href="#!"><i class="material-icons">thumbs_up_down</i>Teams</a>
+                </li>
+            </ul>
+            <ul id="theme_dropdown" class="dropdown-content">
+                <li>
+                    <a href="#!"><i class="material-icons">layers</i>Add All Themes</a>
+                    <a href="#!"><i class="material-icons">layers_clear</i>Clear Themes</a>
+                </li>
+            </ul>
+        </div>
+        <div class="fixed-action-btn header-el header-el2" style="float: right">
+            <a class="btn-floating btn-large grey">
+                <i class="large material-icons tooltipped" data-position="top" data-tooltip="Change Board Size">view_comfy</i>
+            </a>
+            <ul>
+                <li><a class="btn-floating red tooltipped" data-position="top" data-tooltip="4x4"><i class="material-icons">filter_1</i></a></li>
+                <li><a class="btn-floating yellow darken-1 tooltipped" data-position="top" data-tooltip="6x6"><i class="material-icons">filter_2</i></a></li>
+                <li><a class="btn-floating green tooltipped" data-position="top" data-tooltip="8x8"><i class="material-icons">filter_3</i></a></li>
+                <li><a class="btn-floating blue tooltipped" data-position="top" data-tooltip="10x10"><i class="material-icons">filter_4</i></a></li>
+                <li><a class="btn-floating purple tooltipped" data-position="top" data-tooltip="12x12"><i class="material-icons">filter_5</i></a></li>
+                <li><a class="btn-floating orange tooltipped" data-position="top" data-tooltip="14x14"><i class="material-icons">filter_6</i></a></li>
+                <li><a class="btn-floating teal tooltipped" data-position="top" data-tooltip="16x16"><i class="material-icons">filter_7</i></a></li>
+            </ul>
+        </div>
+            <ul class="circles">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </header>
+
+
+    <div class="grid-container" style="padding-top: 5em;">
+        <main role="main" class="grid-left">
+            <section class="msger box1">
+                <main class="msger-chat">
+                    <div class="msg left-msg">
+                        <div class="msg-img" style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)"></div>
+
+                        <div class="msg-bubble">
+                            <div class="msg-info">
+                                <div class="msg-info-name">BOT</div>
+                                <div class="msg-info-time">12:45</div>
+                            </div>
+
+                            <div class="msg-text">
+                                Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="msg right-msg">
+                        <div
+                                class="msg-img"
+                                style="background-image: url(https://image.flaticon.com/icons/svg/145/145867.svg)"
+                        ></div>
+
+                        <div class="msg-bubble">
+                            <div class="msg-info">
+                                <div class="msg-info-name">Sajad</div>
+                                <div class="msg-info-time">12:46</div>
+                            </div>
+
+                            <div class="msg-text">
+                                You can change your name in JS section!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="msg">
+                        <div class="msg-bubble msg-alert msg-info">
+                            <i class="small material-icons">info</i> You joined the lobby.
+                        </div>
+                    </div>
+                </main>
+
+                <form class="msger-inputarea">
+                    <input type="text" class="msger-input" placeholder="Enter your message...">
+                    <button type="submit" class="msger-send-btn">Send</button>
+                </form>
+            </section>
+        </main>
+        <div class="grid-right">
+                <div class="collection with-header">
+                    <div class="collection-header"><h4>Players</h4></div>
+                    <div class="player-row">
+                        <a href="#!" class="collection-item">Ladi</a>
+                        <a href="#!" class="collection-item empty">Empty</a>
+                        <a href="#!" class="collection-item empty">Empty</a>
+                        <a href="#!" class="collection-item empty">Empty</a>
+                        <a href="#!" class="collection-item empty">Empty</a>
+                        <a href="#!" class="collection-item empty">Empty</a>
+                        <a href="#!" class="collection-item empty">Empty</a>
+                        <a href="#!" class="collection-item empty">Empty</a>
+                     <div class="player-row">
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <footer>
+        <a class="btn tooltipped" style="position:relative" data-position="bottom" data-tooltip="Start New Game">Start Game</a>
+    </footer>
+</div>
+
+    <!--JavaScript at end of body for optimized loading-->
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/chat.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.fixed-action-btn');
+            M.FloatingActionButton.init(elems, {
+                direction: 'left',
+                hoverEnabled: false
+            });
+            elems = document.querySelectorAll('.tooltipped');
+            M.Tooltip.init(elems);
+            elems = document.querySelectorAll('.dropdown-trigger');
+            M.Dropdown.init(elems);
+            elems = document.querySelectorAll('.chips');
+            M.Chips.init(elems);
+        });
+    </script>
+</body>
+</html>

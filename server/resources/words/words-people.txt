@@ -1,0 +1,24 @@
+People
+Mother,[_I-]y[_a+]
+Father,B[_a-]b[_a+]
+Child,[.O_]m[.o_]
+Professor,Pr[_o-]f[.e+]s[.o-]
+Teacher,T[_i+][.s_][_a-]
+Senior Teacher,Ol[_u-]k[.o+]-[_a-]gb[_a-]
+Schoolchild,[.O_]m[.o_] il[_e+]-[_i-]w[_e+]
+Student,Ak[.e+]k[.o-][.o+]
+Friend,[.O-]r[.e+]
+Parent,[_O-]b[_i+]
+I,[_E-]mi
+We,[_A-]wa
+You,[_I-]w[.o_]
+Doctor,D[_o+]k[_i+]t[_a-]
+Lawyer,L[.o+]y[_a-]
+Driver,D[_i+]r[.e+]b[_a-]
+Surveyor,S[.o-]f[_i+]y[.o-]
+Nurse,N[.o+][.o-]s[_i-]
+Manager,M[_a+]n[_i+]j[_a-]
+Engineer,[.E_]njin[_i+][_a-]
+Businessman,On[_i+][.s_][_o-]w[_o-]
+Craftsman,On[_i+][.s_][.e+]-[.o_]w[.o+]
+God,[.O_]l[.o+]run

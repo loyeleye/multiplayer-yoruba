@@ -1,0 +1,32 @@
+.playerlist
+{
+    height: 20vh;
+    overflow-y: scroll;
+    box-shadow: inset 6px 7px 10px 3px rgba(0.3, 0.25, 0.1, 0.2);
+    width: 95%;
+    background-image: var(--body-bg);
+}
+
+.sidenav {
+    width: 80vw;
+    min-width: 80vw;
+    max-width: 400px;
+    background-image: var(--body-bg);
+}
+
+.table {
+    display: table;
+}
+
+.table-cell {
+    display: table-cell;
+    vertical-align: text-top;
+    overflow: hidden;
+}
+
+.grid-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 1.2vw;
+    margin-top: -1em;
+}

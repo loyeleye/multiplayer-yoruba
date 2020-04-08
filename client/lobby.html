@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recall Yoruba</title>
+    <link rel="stylesheet" type="text/css" href="css/lobby.css">
+</head>
+<body>
+    <h1>Recall: Yoruba Edition</h1>
+    <div class="grid-container">
+        <div class="queue player-queue">
+            <div class="player-row">
+                <a href="#!" class="queue-item">Player 1</a>
+                <a href="#!" class="queue-item">Player 2</a>
+                <a href="#!" class="queue-item">Player 3</a>
+                <a href="#!" class="queue-item">Player 4</a>
+            </div>
+            <div class="player-row">
+                <a href="#!" class="queue-item">Player 5</a>
+                <a href="#!" class="queue-item">Player 6</a>
+                <a href="#!" class="queue-item">Player 7</a>
+                <a href="#!" class="queue-item">Player 8</a>
+            </div>
+        </div>
+        <div id="game-config" class="controls">
+            <h2 id="game-config-title">Game Settings</h2>
+            <div id="config-size" class="dropdown">
+                <h3>Board Size: 4x4</h3>
+                <div class="dropdown-content">
+                    <p>4x4</p>
+                    <p>6x6</p>
+                    <p>8x8</p>
+                    <!-- todo: dynamically populate with javascript -->
+                </div>
+            </div>
+            <div id="config-content" class="dropdown">
+                <ul>
+                    <li>Greetings</li>
+                    <li>Foods</li>
+                    <li>Animals</li>
+                </ul>
+                <div class="dropdown-content">
+                    <p>None</p>
+                    <p>Greetings</p>
+                    <p>Foods</p>
+                    <p>Animals</p>
+                    <p>All</p>
+                </div>
+            </div>
+        </div>
+        <div class="start-game">
+            <button id="start">Start Game</button>
+        </div>
+        <div class="events-wrapper">
+            <ul id="events">
+                <li>You joined the lobby.</li>
+            </ul>
+            <div class="chat-wrapper">
+                <form id="chat-form">
+                    <input id="chat" autocomplete="off" title="chat" />
+                    <button id="say" onclick="chat()">Say</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="js/lobby.js"></script>
+</body>
+</html>

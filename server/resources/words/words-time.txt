@@ -1,0 +1,30 @@
+Time
+Dawn,[_A-]f[.e-]m[.o+]j[_u+]
+Morning,[_A-][_a+]r[.o-]
+Afternoon,[.O-]s[_a+]n
+Evening,Al[.e+]
+Dusk,[_A-][.s_][_a+]l[.e+]
+Nightfall,[_I-]r[.o-]l[.e+]
+Time,[_A-]k[_o+]k[_o-]
+Second (Time Unit),[_I-][.s_][_i+]s[.e-]
+Minute,[_I-][.s_][.e+]j[_u+]
+Hour,W[_a+]k[_a-]ti
+Day,[.O_]j[.o+]
+Week,[.O-]s[.e-]
+Month,O[.s_][_u-]
+Year,[.O_]d[_u+]n
+Leap Year,[.O]d[_u+]n-l[_e+]
+Century,[.O-]r[_u+]n-d[_u+]n
+Yesterday,N[_i+] [_a-]n[_a+]
+Two days ago,N[_i+] [_i-]j[.e+]ta
+Three days ago,N[_i+] [_i-]j[.e+]rin
+Tomorrow,N[_i+] [.o-]la
+The day after tomorrow,N[_i+] [.o-]t[_u+]nla
+Three days from now,N[_i+] [.o_]j[.o+] m[.e+]rin l[_o+]ni
+This week,N[_i+] [.o-]s[.e-] yi
+Next week,N[_i+] [.o-]s[.e-] t[_o+] nb[.o-]
+Last week,N[_i+] [.o-]s[.e-] t[_o+] k[.o_]j[_a+]
+Two weeks ago,N[_i+] [.o-]s[.e-] k[.e-]ta
+Last year,N[_i+] [_e-][.s_][_i+]n
+Two years ago,N[_i+] [_i-]d[_u+]nta
+Two years from now,N[_i+] [.o_]d[_u+]n m[.e+]ta l[_o+]ni
