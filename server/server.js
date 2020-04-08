@@ -1,6 +1,6 @@
 const http = require('http');
 const express = require('express');
-const session = require('express-session');
+const session = require('cookie-session');
 const socketio = require('socket.io');
 const lobbyService = require('./models/lobby');
 const gameEvents = require('./models/game').Events;
