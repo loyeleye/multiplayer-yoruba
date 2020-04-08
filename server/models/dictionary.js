@@ -11,7 +11,7 @@ function init() {
     let englishToYoruba = {};
     let yorubaToEnglish = {};
     let wordsByCategory = {};
-    const dir ='./resources/words/';
+    const dir ='./server/resources/words/';
     const filenames = fs.readdirSync(dir);
     for (let filename of filenames) {
         const data = fs.readFileSync(dir + filename);
