@@ -13,11 +13,17 @@ const GameSettings = require('./models/game').GameSettings;
 const dict = require('./models/dictionary');
 const allCategories = Object.keys(dict['byCategory']);
 const app = express();
-const server = http.createServer(app);
+
+const PORT = process.env.PORT || 3000;
+
+const server = express()
+    .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
 const io = socketio(server);
 
 const clientPath = `${__dirname}/../client`;
 
+app.set('port', (process.env.PORT || 5000));
 app.set('views', './views');
 app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: false }));
@@ -219,10 +225,6 @@ io.on('connection', (sock) => {
 
 server.on('error', (err) => {
     console.error('Server error:', err);
-});
-
-server.listen(8080, () => {
-    console.log('RecallYoruba started on 8080');
 });
 
 function lobbyConfig(settings, sock) {
