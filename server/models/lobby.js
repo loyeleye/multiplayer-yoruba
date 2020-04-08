@@ -43,9 +43,9 @@ class Lobby {
                 if (lobbyServiceInstance.activeLobby === lobby)
                     lobbyServiceInstance.refillOrCreateLobby();
                 console.log(`Start uuid = ${lobby.game.id}`);
-                if (this.password !== null) {
-                    delete lobbyServiceInstance.privateLobbies[this.password];
-                    this.password = null;
+                if (lobby.password !== null) {
+                    delete lobbyServiceInstance.privateLobbies[lobby.password];
+                    lobby.password = null;
                 }
                 io.to(`${lobby.id}`).emit('goto-game', lobby.game.id);
             }
