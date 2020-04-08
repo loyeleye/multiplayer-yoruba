@@ -14,18 +14,18 @@ const dict = require('./models/dictionary');
 const allCategories = Object.keys(dict['byCategory']);
 const app = express();
 
+const clientPath = `${__dirname}/../client`;
+
 const PORT = process.env.PORT || 3000;
-const INDEX = '/client/index.html';
+const INDEX = clientPath + '/index.html';
 
 const server = express()
-    .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+    .use((req, res) => res.sendFile(INDEX))
     .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const io = socketio(server);
 
-const clientPath = `${__dirname}/../client`;
-
-app.set('port', (process.env.PORT || 5000));
+app.set('port', PORT);
 app.set('views', './views');
 app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: false }));
