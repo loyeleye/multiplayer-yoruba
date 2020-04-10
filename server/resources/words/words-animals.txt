@@ -1,7 +1,7 @@
 Animals
 Dog,Aj[_a+]
 Cat,Ol[_o+]ngb[_o-]
-Rhino,[_A-]gb[_a+]nr[_e+]r{_e+]
+Rhino,[_A-]gb[_a+]nr[_e+]r[_e+]
 Ram,[_A-]gb[_o-]
 Deer,[_A-]gb[.o-]nr[_i+]n
 Giraffe,[_A-]g[_u-]nf[.o_]

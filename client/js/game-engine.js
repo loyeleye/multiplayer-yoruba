@@ -247,6 +247,17 @@ function flipCard(params) {
     }
 }
 
+function setCard(id, params) {
+    let activePlayer = (params.player === PERSON_NAME);
+    let color = params.matched ?
+        params.color : (activePlayer ? 'bg--black' : 'bg--grey');
+    let backCardClasses = `dw-flp__pnl dw-flp__pnl--bck bd--white tx--white tx--center ${color}`;
+    let parentPanel = document.getElementById(params.id);
+    let contentPanel = parentPanel.firstElementChild;
+    let backPanel = contentPanel.lastElementChild;
+    backPanel.className = backCardClasses;
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -320,7 +331,7 @@ async function nextTurn(params) {
 async function frenzyIntro() {
     const instance = M.Modal.getInstance(turnModal);
     turnModal.className = `modal bottom-sheet hoverable green`;
-    turnHeader.innerText = `Frenzy Mode Activated!! START MATCHING NOW!`;
+    turnHeader.innerText = `Frenzy Mode Activated! Start Matching Now!`;
 
     instance.open();
     await sleep(1000);
@@ -391,11 +402,26 @@ function quitGame() {
     location.replace('./');
 }
 
-function refreshGrid(grid) {
+function autoRefresh(grid) {
     for (let x in grid) {
         for (let y in grid) {
             let id = `item.${x}.${y}`;
-            if (!grid[x][y]) resetCard(id);
+            if (grid[x][y]) {
+                setCard(id, grid[x][y]);
+            } else {
+                resetCard(id);
+            }
+        }
+    }
+}
+
+function refreshGrid(grid) {
+    for (let x in grid) {
+        for (let y in grid) {
+            if (!grid[x][y]) {
+                let id = `item.${x}.${y}`;
+                resetCard(id);
+            }
         }
     }
 }

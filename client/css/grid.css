@@ -423,11 +423,9 @@ img.dw-flp__pnl {
 .hide {
     display: none;
 }
-
 .fixed-action-btn {
     right: auto;
 }
-
 .sidenav-btn {
     float: left;
     right: auto;

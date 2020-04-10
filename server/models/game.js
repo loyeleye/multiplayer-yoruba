@@ -169,6 +169,7 @@ class Game {
         this.alert(`Starting game...`);
         this.load();
         this.gameStarted = true;
+        this.autoRefreshEnabled = false;
     }
 
     load() {
@@ -225,6 +226,14 @@ class Game {
             rows.push(cols);
         }
         this.matchGrid = rows;
+    }
+
+    async autoRefresh(refreshDelay = 5, recursiveCall = false) {
+        if (this.autoRefreshEnabled && !recursiveCall) return;
+        this.io.to(`${this.id}`).emit('auto-refresh', this.matchGrid);
+        this.autoRefreshEnabled = true;
+        await sleep(refreshDelay * 1000);
+        this.autoRefresh(refreshDelay, true);
     }
 
     loadOrder() {
@@ -363,22 +372,21 @@ class Game {
         }
     }
 
-    updateMatchGrid(id1, id2) {
-        let coords1 = id1.split('.');
-        let coords2 = id2.split('.');
-        let c1 = {
-            x: parseInt(coords1[1]),
-            y: parseInt(coords1[2])
+    updateMatchGrid(id1, id2, value = true) {
+        this.updateTile(id1, value);
+        this.updateTile(id2, value);
+    }
+
+    updateTile(id, value) {
+        let coords = id.split('.');
+        let tilePos = {
+            x: parseInt(coords[1]),
+            y: parseInt(coords[2])
         };
-        let c2 = {
-            x: parseInt(coords2[1]),
-            y: parseInt(coords2[2])
-        };
-        if (this.matchGrid[c1.x][c1.y] || this.matchGrid[c2.x][c2.y]) {
+        if (this.matchGrid[tilePos.x][tilePos.y] && this.matchGrid[tilePos.x][tilePos.y].matched) {
             throw "Pair already matched!";
         }
-        this.matchGrid[c1.x][c1.y] = true;
-        this.matchGrid[c2.x][c2.y] = true;
+        this.matchGrid[tilePos.x][tilePos.y] = value;
     }
 
     displayTurns() {
@@ -549,7 +557,7 @@ class Game {
         let allMatched = true;
         for (let i in this.matchGrid) {
             for (let j in this.matchGrid[i]) {
-                allMatched = allMatched && this.matchGrid[i][j];
+                allMatched = allMatched && (this.settings.mode !== 'frenzy' && this.matchGrid[i][j] || this.matchGrid[i][j] && this.matchGrid[i][j].matched);
                 if (!allMatched) break;
             }
             if (!allMatched) break;
@@ -754,6 +762,7 @@ function gameEvents(sock, lobbyService) {
         } else if (game.settings.mode === 'frenzy') {
             game.disableFlip = false;
             game.flipCardFrenzy(id, callingPlayer.name).then((params) => {
+                game.autoRefresh(5);
                 sock.broadcast.to(`${game.id}`).emit('response-flip',params);
                 params.isActivePlayer = true;
                 sock.emit('response-flip', params);
@@ -761,7 +770,12 @@ function gameEvents(sock, lobbyService) {
                     params.isActivePlayer = false;
                     if (params.match) {
                         try {
-                            game.updateMatchGrid(params.id, params.id2);
+                            let tileState = {
+                                player: callingPlayer.name,
+                                matched: true,
+                                color: params.color
+                            };
+                            game.updateMatchGrid(params.id, params.id2, tileState);
                         } catch (err) {
                             console.warn(`${callingPlayer.name} caused error: ${err}. Kicked from game as precaution.`);
                             sock.emit('dc');
@@ -773,11 +787,18 @@ function gameEvents(sock, lobbyService) {
                         game.addScore(callingPlayer.name, params.points);
                         game.checkWin();
                     } else {
+                        game.updateMatchGrid(params.id, params.id2, false);
                         sock.broadcast.to(`${game.id}`).emit('response-unflip',params);
                         params.isActivePlayer = true;
                         sock.emit('response-unflip', params);
                     }
                 } else {
+                    let tileState = {
+                        player: callingPlayer.name,
+                        matched: false,
+                        color: params.color
+                    };
+                    game.updateTile(params.id, tileState);
                     game.disableFlip = false;
                 }
             }).catch(err => {
