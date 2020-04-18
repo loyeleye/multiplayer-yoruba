@@ -86,7 +86,7 @@ app.post('/rejoin', function(req, res) {
     } catch (err) {
         console.warn('rejoin game error');
         console.error(err);
-        let msg = `Well, that's unfortunate. We were unable to reconnect to your previous game.`;
+        let msg = `Well, that is unfortunate. We were unable to reconnect to your previous game.`;
         res.render('index', {message: msg});
     }
 });
