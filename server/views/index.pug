@@ -3,6 +3,7 @@ html(lang='en')
     head
         meta(charset="UTF-8")
         title Recall Yoruba
+        link(rel="icon" href="favicon.ico")
         link(rel="stylesheet" href="css/index.css" type="text/css")
         link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
         link(rel="stylesheet" type="text/css" href="css/materialize.min.css" media="screen,projection")
@@ -23,7 +24,7 @@ html(lang='en')
             a(class="waves-effect waves-light btn grey modal-trigger" href="#customLobbyModal") (Or) Join Private Lobby
                 i(class="material-icons right") do_not_disturb_on
 
-            a(class="waves-effect waves-light btn yellow darken-1" href="../rejoin") (Or) Rejoin Previous Game
+            a(class="waves-effect waves-light btn yellow darken-1" href="javascript:rejoinGame()") (Or) Rejoin Previous Game
                 i(class="material-icons right") add
         div(id="customLobbyModal" class="modal")
             div(class="modal-content")
@@ -35,7 +36,7 @@ html(lang='en')
                                 div(class="input-field col s12")
                                     i(class="material-icons prefix") person
                                     input(id="name2" class="has-character-counter validate" name="name" autocomplete="off"
-                                        data-length="15" required type="text" pattern="[\S]{1,15}")
+                                        data-length="15" required type="text")
                                     label(for="name2") Enter Your Name:
                                     span(class="helper-text" data-error="Please pick a name between 1 and 15 characters with no whitespaces."
                                         data-success="Username valid.") Enter a username.
@@ -50,7 +51,7 @@ html(lang='en')
     script.
         window.onload = function() {
             const msg = '!{message}';
-            if (msg !== '') window.alert(msg);
+            if (msg) window.alert(msg);
         };
         document.addEventListener('DOMContentLoaded', function () {
             let elems = document.querySelectorAll('.has-character-counter');

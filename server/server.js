@@ -48,7 +48,7 @@ app.post('/rejoin', function(req, res) {
     try {
         let game = lobbyService.activeGames[req.body.gameId];
 
-        if (typeof game === 'undefined') {
+        if (typeof game === 'undefined' || typeof game.lobby === 'undefined') {
             let msg = `Your previous game is no longer in progress!`;
             res.render('index', {message: msg});
             return;

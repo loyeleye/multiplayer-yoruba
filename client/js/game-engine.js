@@ -453,6 +453,17 @@ function autoRefresh(grid) {
     }
 }
 
+function toggleAudio() {
+    let audio = document.getElementById("igaudio");
+    if (audio.paused) {
+        audio.play();
+        document.getElementById("igaudioIcon").innerText = "pause";
+    } else {
+        audio.pause();
+        document.getElementById("igaudioIcon").innerText = "play_arrow";
+    }
+}
+
 function refreshGrid(grid) {
     for (let x in grid) {
         for (let y in grid) {

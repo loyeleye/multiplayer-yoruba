@@ -3,6 +3,7 @@ html(lang="en")
     head
         meta(http-equiv="Content-type" charset="UTF-8")
         title Recall Yoruba
+        link(rel="icon" href="favicon.ico")
         link(rel="stylesheet" type="text/css" href="css/grid.css")
         link(rel="stylesheet" type="text/css" href="css/gamechat.css")
         link(rel="stylesheet" type="text/css" href="css/gridmenu.css")
@@ -49,6 +50,11 @@ html(lang="en")
                         a(class="subheader") Options
                         ul(id="options" class="playerlist")
                             li
+                                a(href="javascript:toggleAudio();" class="waves-effect waves-teal btn-flat") Toggle Music
+                                    audio(id="igaudio" controls style="display:none")
+                                        source(src="music/yoruba-smite.mp3" type="audio/mpeg")
+                                    i(class="material-icons left" id="igaudioIcon") play_arrow
+                            li
                                 a(onclick="toggleTileSize()" class="waves-effect waves-teal btn-flat") Toggle Tile Size
                                     i(class="material-icons left") apps
                             li
@@ -87,7 +93,7 @@ html(lang="en")
             div(class="tap-target-content")
                 h5 Welcome to Recall Yorùbá!
                 p Click on this button to open the in game menu and chat.
-        h1(class="knockout" style="width: 90vw; display: inline-block") Recall: Yorùbá Edition
+        h3(class="knockout" style="width: 90vw; display: inline-block") Recall: Yorùbá Edition
         div(id="board" class="grid-container")
         div(style="display:none" id="identifier") #{pName}
         div(style="display:none" id="playerImage") #{pImage}
@@ -113,5 +119,6 @@ html(lang="en")
                 let mode = `#{gameMode}`;
                 let turn = !{JSON.stringify(firstTurn).replace(/<\//g, '<\\/')}
                 initMode(mode, turn);
+                toggleAudio();
             });
 

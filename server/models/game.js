@@ -637,14 +637,10 @@ class Game {
 
     endGame() {
         this.io.to(`${this.id}`).emit('dc');
-        delete this.lobby.game;
-        try {
-            lobbyService.endLobby(this.lobby.id);
-        } catch (err) {
-            console.warn(err);
-        }
+        lobbyService.endLobby(this.lobby.id);
         delete this.lobby;
         delete lobbyService.activeGames[this.id];
+        delete this.lobby.game;
         delete this;
     }
 }
