@@ -9,14 +9,16 @@ const teamsList = get("#teams");
 
 const turnHeader = get("#playerTurnHeader");
 const turnModal = get("#turnModal");
+const turnIcon = get("#playerTurnIcon");
 
 const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
-const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
 const BOT_NAME = "Coach Bot";
 const PERSON_NAME = document.querySelector("#identifier").innerText;
+let PERSON_IMG = document.querySelector("#playerImage").innerText;
 
 const BOT_PHRASES = ['"{0}"? I believe that is "{1}" in English.',
                         'Ah, "{0}"... Or as the Oyinbos might say: "{1}".',
+                        '"{0}" in Yorùbá means "{1}".',
                         '"{0}" in Yorùbá means "{1}".'];
 
 // GRID
@@ -29,7 +31,7 @@ const flip_back = "dw-flp__pnl dw-flp__pnl--bck bd--white tx--white tx--center b
 
 
 sock.on('chat', (params) => {
-    if (params.name !== PERSON_NAME) appendMessage(params.name, PERSON_IMG, "left", params.message);
+    if (params.name !== PERSON_NAME) appendMessage(params.name, params.image, "left", params.message);
 });
 sock.on('chat-alert', appendAlert);
 sock.on('dc', () => {
@@ -46,7 +48,7 @@ sock.on('connect-alert', (params) => {
     appendAlert(params.alert);
     refreshLists(params.players);
 });
-
+sock.on('set-team', (team) => sessionStorage.setItem('recallYorubaTeam', team));
 sock.on('response-flip', flipCard);
 sock.on('refresh-list', refreshLists);
 sock.on('response-unflip', unflip);
@@ -54,7 +56,11 @@ sock.on('response-match', match);
 sock.on('next-turn', nextTurn);
 sock.on('response-win', showWin);
 sock.on('refresh-grid', refreshGrid);
+sock.on('load-grid', loadGrid);
+sock.on('auto-refresh', autoRefresh);
+sock.on('set-image', (image) => PERSON_IMG = image);
 sock.on('toast-alert', (params) => toastAlert(params.text, params.classes));
+sock.on('refresh-failed', () => sock.emit('request-refresh'));
 
 get("#confirmQuitBtn").addEventListener('click', quitGame);
 
@@ -118,7 +124,6 @@ async function refreshLists(params) {
         await sleep(500);
         sock.emit('request-refresh');
     }
-
 }
 
 function refreshScoreList(scores) {
@@ -219,8 +224,9 @@ function flipCard(params) {
     let parentPanel = document.getElementById(params.id);
     let contentPanel = parentPanel.firstElementChild;
     let backPanel = contentPanel.lastElementChild;
-    let p = backPanel.firstElementChild;
     let frontPanel = contentPanel.firstElementChild;
+    let p = backPanel.firstElementChild;
+    if (!p) p = frontPanel.firstElementChild;
 
     let pre = params.isActivePlayer ? `<i class='material-icons left'>star</i>` : '';
     let post = params.isActivePlayer ? `<i class='material-icons right'>star</i>` : '';
@@ -249,13 +255,33 @@ function flipCard(params) {
 
 function setCard(id, params) {
     let activePlayer = (params.player === PERSON_NAME);
-    let color = params.matched ?
-        params.color : (activePlayer ? 'bg--black' : 'bg--grey');
-    let backCardClasses = `dw-flp__pnl dw-flp__pnl--bck bd--white tx--white tx--center ${color}`;
-    let parentPanel = document.getElementById(params.id);
+    let colors = params.matched ?
+        params.color.split(" ") : (activePlayer ? ['bg--black'] : ['bg--grey']);
+
+    let parentPanel = document.getElementById(id);
     let contentPanel = parentPanel.firstElementChild;
     let backPanel = contentPanel.lastElementChild;
-    backPanel.className = backCardClasses;
+    let frontPanel = contentPanel.firstElementChild;
+    let p = backPanel.firstElementChild;
+
+    if (!p && frontPanel.firstElementChild) {
+        p = frontPanel.firstElementChild;
+    }
+
+    if (params.hasOwnProperty('word'))
+        p.innerHTML = params.word;
+
+    p.classList.remove('hide');
+    contentPanel.classList.remove("dw-flp__cntnt");
+    frontPanel.classList.remove("bg--green");
+    for (let color of colors) {
+        frontPanel.classList.add(color);
+    }
+
+    if (!frontPanel.children.length)
+        frontPanel.insertBefore(p, null);
+
+    contentPanel.onclick = null;
 }
 
 function sleep(ms) {
@@ -323,6 +349,7 @@ async function nextTurn(params) {
         turnHeader.innerText = `${params.player} Turn`;
     else
         turnHeader.innerText = `${params.player}'s Turn`;
+    turnIcon.src = "../img/" + params.image;
     instance.open();
     await sleep(1000);
     instance.close();
@@ -365,13 +392,15 @@ function showWin(params) {
         let li = document.createElement('li');
         li.className = `collection-item avatar ${display.materializeColor}`;
         let img = document.createElement('img');
-        img.src = "../img/team.svg";
+        let playerName = display.player;
+        let imgName = params.images[playerName];
+        img.src = `../img/${imgName}`;
         img.alt = "";
         img.className = `circle ${display.materializeColor}`;
         img.innerText = 'star';
         li.insertBefore(img, null);
         let span = document.createElement('span');
-        span.innerText = display.player;
+        span.innerText = playerName;
         span.className = 'title';
         li.insertBefore(span, null);
         let p = document.createElement('p');
@@ -397,9 +426,18 @@ function showWin(params) {
 }
 
 function quitGame() {
-    sessionStorage.removeItem("recallYorubaId");
-    sessionStorage.removeItem("recallYorubaName");
     location.replace('./');
+}
+
+function loadGrid(grid) {
+    for (let x in grid) {
+        for (let y in grid) {
+            if (grid[x][y]) {
+                let id = `item.${x}.${y}`;
+                setCard(id, grid[x][y]);
+            }
+        }
+    }
 }
 
 function autoRefresh(grid) {
@@ -427,7 +465,7 @@ function refreshGrid(grid) {
 }
 
 function botResponse(word, translation) {
-    const r = random(0, BOT_PHRASES.length - 1);
+    const r = random(0, BOT_PHRASES.length);
     let msgText = BOT_PHRASES[r];
     msgText = msgText.replace("{0}", word);
     msgText = msgText.replace("{1}", translation);

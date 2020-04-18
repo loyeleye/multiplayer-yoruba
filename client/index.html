@@ -27,6 +27,9 @@
 
         <a class="waves-effect waves-light btn grey modal-trigger" href="#customLobbyModal">(Or) Join Private Lobby
             <i class="material-icons right">do_not_disturb_on</i></a>
+
+        <a class="waves-effect waves-light btn yellow darken-1" href="javascript:rejoinGame()">(Or) Rejoin Previous Game
+            <i class="material-icons right">add</i></a>
     </form>
 
     <!-- Modal Body -->
@@ -76,6 +79,28 @@
             } else {
                 document.getElementById("password").type = "password";
             }
+        }
+        function rejoinGame() {
+            let name = sessionStorage.getItem('recallYorubaName');
+            let id = sessionStorage.getItem('recallYorubaId');
+            console.log(`Starting game: ${id}`);
+            let url = './rejoin';
+            let form = document.createElement('form');
+            form.setAttribute('action', url);
+            form.setAttribute('method', 'post');
+            form.style.setProperty('display','none');
+            let input = document.createElement('input');
+            input.setAttribute('type', 'text');
+            input.setAttribute('name', 'gameId');
+            input.setAttribute('value', id);
+            form.insertBefore(input, null);
+            let input2 = document.createElement('input');
+            input2.setAttribute('type', 'text');
+            input2.setAttribute('name', 'name');
+            input2.setAttribute('value', name);
+            form.insertBefore(input2, null);
+            document.body.insertBefore(form, null);
+            form.submit();
         }
     </script>
 </body>

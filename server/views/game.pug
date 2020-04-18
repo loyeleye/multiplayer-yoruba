@@ -9,7 +9,7 @@ html(lang="en")
         link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
         link(rel="stylesheet" type="text/css" href="css/materialize.min.css" media="screen,projection")
         meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    body(class="bg--green bg--image" onload="createGrid(" + size + ")")
+    body(class="bg--green bg--image")
         ul(id="slide-out" class="sidenav")
             li
                 div(class="row")
@@ -67,7 +67,8 @@ html(lang="en")
                                 input(type="text" class="msger-input" placeholder="Enter your message...")
                                 button(type="submit" class="msger-send-btn") Send
         div(id="turnModal" class="modal bottom-sheet hoverable")
-            div(class="modal-content")
+            div(class="modal-content turnHeader")
+                img(id="playerTurnIcon" class="prefix turn-img")
                 h4(id="playerTurnHeader" class="center-align") Player's Turn
         div(id="quitModal" class="modal")
             div(class="modal-content")
@@ -89,12 +90,14 @@ html(lang="en")
         h1(class="knockout" style="width: 90vw; display: inline-block") Recall: Yorùbá Edition
         div(id="board" class="grid-container")
         div(style="display:none" id="identifier") #{pName}
+        div(style="display:none" id="playerImage") #{pImage}
         script(type="text/javascript" src="/socket.io/socket.io.js")
         script(type="text/javascript" src="js/game-engine.js" charset="utf-8")
         script(type="text/javascript" src="js/materialize.min.js")
         script.
             sessionStorage.setItem('recallYorubaId',"#{gameId}");
             sessionStorage.setItem('recallYorubaName',"#{pName}");
+            sessionStorage.setItem('recallYorubaPic', "#{pImage}");
             document.addEventListener('DOMContentLoaded', function () {
                 var elems = document.querySelectorAll('.sidenav');
                 M.Sidenav.init(elems);
@@ -102,8 +105,13 @@ html(lang="en")
                 M.Tabs.init(elems);
                 var elem = document.querySelectorAll('.modal');
                 M.Modal.init(elem);
-                let turn = !{JSON.stringify(firstTurn).replace(/<\//g, '<\\/')}
+                createGrid(!{size});
+                let grid = !{JSON.stringify(currentGrid).replace(/<\//g, '<\\/')}
+                if (grid) {
+                    loadGrid(grid);
+                }
                 let mode = `#{gameMode}`;
+                let turn = !{JSON.stringify(firstTurn).replace(/<\//g, '<\\/')}
                 initMode(mode, turn);
             });
 

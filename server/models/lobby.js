@@ -28,7 +28,18 @@ class Lobby {
             let team = (this.settings.teams[0].length() > this.settings.teams[1].length()) ? 1 : 0;
             this.settings.teams[team].addMember(player);
         }
-        return 'success';
+        let teams = this.getPlayerTeams(true);
+        let color = teams[name][0];
+        player.setImageToColorDefault(color);
+        return player;
+    }
+
+    resetImages() {
+        let teams = this.getPlayerTeams();
+        for (let name in teams) {
+            let color = teams[name][0];
+            player.setImageToColorDefault(color);
+        }
     }
 
     async startGame(io, initiator) {
@@ -69,26 +80,22 @@ class Lobby {
         delete this.players[name];
     }
 
-    updatePlayerConnection(name, connected) {
-        if (typeof connected !== 'boolean') {
-            console.warn('Update called to player connection is not a boolean. No action performed.');
-            return;
-        }
-        this.players[name].connected = connected;
-        if (this.game !== null) {
-            this.game.updatePlayerConnection(name, connected);
-        }
-    }
-
     getPlayers() {
         return Object.keys(this.players);
     }
 
+    getImages() {
+        let images = {};
+        let players = Object.values(this.players);
+        for (let player of players) {
+            images[player.name] = player.image;
+        }
+        return images;
+    }
 
-
-    getPlayerTeams() {
+    getPlayerTeams(forFFA = this.settings.ffa) {
         let playerTeams = {};
-        if (this.settings.ffa) {
+        if (forFFA) {
             let p = this.getPlayers();
             let cc = Object.values(Team.colorCodes);
             for (let i = 0; i < p.length; i++) {
@@ -118,6 +125,7 @@ class Lobby {
 class Player {
     constructor(name, lobbyId) {
         this.name = name;
+        this.image = 'team.svg';
         this.lobbyId = lobbyId;
         this.team = null;
     }
@@ -132,6 +140,10 @@ class Player {
 
     setTeam(team) {
         this.team = team;
+    }
+
+    setImageToColorDefault(color) {
+        this.image = color.toLowerCase() + '.png';
     }
 
     isValid() {
@@ -176,8 +188,7 @@ class LobbyService {
             this.refillOrCreateLobby();
             let ret = this.activeLobby.addPlayer(name);
         }
-        if (ret === 'collision') return ret;
-        return this.activeLobby.length;
+        return ret;
     }
 
     removePlayer(name, lobbyId) {
@@ -187,12 +198,6 @@ class LobbyService {
             this.refillLobbyQueue.push(lobby);
 
         lobby.removePlayer(name);
-    }
-
-    updatePlayerConnection(name, lobbyId, connected) {
-        let lobby = this.lobbyTracker[lobbyId];
-
-        lobby.updatePlayerConnection(name, connected);
     }
 
     getPlayerFromActiveLobby(name) {

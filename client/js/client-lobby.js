@@ -5,12 +5,13 @@ const sock = io();
 const playerList = document.getElementById("playerList");
 
 sock.on('chat', (params) => {
-    if (params.name !== PERSON_NAME) appendMessage(params.name, PERSON_IMG, "left", params.message);
+    if (params.name !== PERSON_NAME) appendMessage(params.name, params.image, "left", params.message);
 });
 sock.on('chat-bot', (message) => {
    appendMessage(BOT_NAME, BOT_IMG, "left", message);
 });
 sock.on('chat-alert', appendAlert);
+sock.on('set-image', (image) => PERSON_IMG = image);
 sock.on('config-alert', (params) => {
    appendAlert(params.alert, 'build');
    switch (params.set) {
@@ -52,7 +53,7 @@ sock.on('connect-alert', (params) => {
     refreshPlayerList(params.players);
 });
 sock.on('request-connect', () => {
-    sock.emit('response-connect', {name: PERSON_NAME, password: LOBBY_CODE});
+    sock.emit('lobby-connect', {name: PERSON_NAME, password: LOBBY_CODE});
 });
 sock.on('update-lobbylist', (players) => {
     refreshPlayerList(players);
@@ -93,10 +94,10 @@ const BOT_MSGS = [
 
 // Icons made by Freepik from www.flaticon.com
 const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
-const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
 const BOT_NAME = "Coach Bot";
 const PERSON_NAME = document.querySelector("#identifier").innerText;
 const LOBBY_CODE = document.querySelector("#password").innerText;
+let PERSON_IMG = document.querySelector("#playerImage").innerText;
 
 msgerForm.addEventListener("submit", event => {
   event.preventDefault();
@@ -129,7 +130,7 @@ function appendMessage(name, img, side, text) {
   //   Simple solution for small apps
   const msgHTML = `
     <div class="msg ${side}-msg">
-      <div class="msg-img" style="background-image: url(${img})"></div>
+      <div class="msg-img" style="background-image: url(../img/${img})"></div>
 
       <div class="msg-bubble">
         <div class="msg-info">
@@ -178,14 +179,30 @@ function refreshPlayerList(lobbyList) {
         const color = lobbyList[player];
         let a = document.createElement("a");
         let span = document.createElement("span");
-        a.className = 'collection-item';
+        a.className = 'collection-item modal-trigger';
         a.innerText = player;
+        if (player === PERSON_NAME) {
+            a.onclick = setProfilePic;
+        }
         span.className = 'new badge ' + color[1];
         span.setAttribute('data-badge-caption', 'Team');
         span.innerText = color[0];
         a.insertBefore(span, null);
         playerList.insertBefore(a, null);
     }
+}
+
+function setImage(image) {
+    sock.emit('set-image', image);
+    let profileModal = document.getElementById("profilePicModal");
+    let instance = M.Modal.getInstance(profileModal);
+    instance.close();
+}
+
+function setProfilePic() {
+    let profileModal = document.getElementById("profilePicModal");
+    let instance = M.Modal.getInstance(profileModal);
+    instance.open();
 }
 
 // Settings

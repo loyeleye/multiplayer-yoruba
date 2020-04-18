@@ -40,6 +40,57 @@ app.get('/lobby', function(req, res) {
     res.redirect('/');
 });
 
+app.get('/rejoin', function(req, res) {
+    res.redirect('/');
+});
+
+app.post('/rejoin', function(req, res) {
+    try {
+        let game = lobbyService.activeGames[req.body.gameId];
+
+        if (typeof game === 'undefined') {
+            let msg = `Your previous game is no longer in progress!`;
+            res.render('index', {message: msg});
+            return;
+        }
+
+        let player = game.lobby.players[req.body.name];
+
+        if (typeof player === 'undefined') {
+            if (game.originalPlayerList.includes(req.body.name)) {
+                console.log(game.originalPlayerList);
+                player = game.lobby.addPlayer(req.body.name);
+                player.image = req.body.pic;
+            } else {
+                console.log(game.lobby.getPlayers());
+                console.log(`Bad name: ${req.body.name}`);
+                let msg = `You are not part of this active game!`;
+                res.render('index', {message: msg});
+                return;
+            }
+        }
+
+        game.updatePlayerConnection(player.name, true);
+        res.render('game', {
+            gameId: game.id,
+            gameMode: game.settings.mode,
+            pName: req.body.name,
+            size: game.settings.size,
+            disableTeams: game.settings.ffa ? 'disabled' : '',
+            scorelist: game.scoreDisplay,
+            turnslist: game.displayTurns(),
+            teamslist: game.teamScoreDisplay,
+            firstTurn: game.settings.mode === 'frenzy' ? null : game.getActive(),
+            currentGrid: game.loadGrid(player)
+        });
+    } catch (err) {
+        console.warn('rejoin game error');
+        console.error(err);
+        let msg = `Well, that's unfortunate. We were unable to reconnect to your previous game.`;
+        res.render('index', {message: msg});
+    }
+});
+
 app.post('/lobby', (req, res) => {
     req.body.name.trim();
     if (req.body.name.length > 15 || req.body.name.length === 0) {
@@ -53,12 +104,12 @@ app.post('/lobby', (req, res) => {
         return;
     }
 
-    let lobby, password;
+    let lobby, password, addAttempt;
 
     if (typeof req.body.password !== 'undefined') {
         password = req.body.password;
         lobby = lobbyService.getPrivateLobby(password);
-        let addAttempt = lobby.addPlayer(req.body.name);
+        addAttempt = lobby.addPlayer(req.body.name);
         if (addAttempt === 'collision') {
             let msg = `There is already a player with the name "${req.body.name}" in the lobby! Please choose a different name to join this lobby.`;
             res.render('index', {message: msg});
@@ -69,7 +120,7 @@ app.post('/lobby', (req, res) => {
             return;
         }
     } else {
-        let addAttempt = lobbyService.addPlayer(req.body.name);
+        addAttempt = lobbyService.addPlayer(req.body.name);
         if (addAttempt === 'collision') {
             let msg = `There is already a player with the name "${req.body.name}" in the lobby! Please choose a different name to join this lobby.`;
             res.render('index', {message: msg});
@@ -78,10 +129,10 @@ app.post('/lobby', (req, res) => {
         lobby = lobbyService.activeLobby;
         password = "";
     }
-    console.log(lobby);
     res.render('lobby', {lobbyList: lobby.getPlayers(),
         lobbyId: lobby.id,
         pName: req.body.name,
+        pImage: addAttempt.image,
         lPass: password,
         modeTitle: lobby.settings.getMode(),
         modeDesc: lobby.settings.getModeDesc(),
@@ -94,33 +145,6 @@ app.post('/lobby', (req, res) => {
 });
 
 app.get('/game', (req, res) => {
-    console.log('get');
-
-    try {
-        let sess = req.session;
-
-        let game = lobbyService.activeGames[sess.recallYorubaId];
-        let player = game.lobby.players[player];
-
-        if (typeof game === 'undefined' || typeof player === 'undefined') {
-            res.redirect('/');
-            return;
-        }
-
-        res.render('game', {
-            gameId: sess.recallYorubaId,
-            pName: sess.recallYorubaName,
-            size: game.settings.size,
-            disableTeams: game.settings.ffa ? 'disabled' : '',
-            scorelist: game.scoreDisplay,
-            turnslist: game.displayTurns(),
-            teamslist: game.teamScoreDisplay
-        });
-    } catch (err) {
-        console.error(err);
-    }
-
-
     res.redirect('/');
 });
 
@@ -140,7 +164,8 @@ app.post('/game', (req, res) => {
         scorelist: game.scoreDisplay,
         turnslist: game.displayTurns(),
         teamslist: game.teamScoreDisplay,
-        firstTurn: game.settings.mode === 'frenzy' ? null : game.getActive()
+        firstTurn: game.settings.mode === 'frenzy' ? null : game.getActive(),
+        currentGrid: null
     });
 });
 
@@ -148,7 +173,16 @@ io.on('connection', (sock) => {
     sock.emit('request-connect');
 
     sock.on('chat', params => {
-        io.emit('chat', params);
+        const player = lobbyService.sockets[sock.id];
+        params.image = player.image;
+        const lobby = lobbyService.getLobbyIdFor(sock);
+        io.to(lobby).emit('chat', params);
+    });
+
+    sock.on('set-image', (image) => {
+       const player = lobbyService.sockets[sock.id];
+       player.image = image;
+       sock.emit('set-image', image);
     });
 
     sock.on('chat-bot', (name) => {
@@ -160,7 +194,7 @@ io.on('connection', (sock) => {
         });
     });
 
-    sock.on('response-connect', (params) => {
+    sock.on('lobby-connect', (params) => {
         try {
             let name = params.name;
             let lobby;
@@ -178,7 +212,7 @@ io.on('connection', (sock) => {
             let pass = params.password !== "" ? ` (with password: "${params.password}")` : "";
             console.log(`${name} connected to lobby ${lobby.id}${pass} - sock# ${sock.id}`);
         } catch(err) {
-            console.warn('response-connect error');
+            console.warn('lobby-connect error');
             sock.emit('dc');
         }
     });
@@ -190,14 +224,7 @@ io.on('connection', (sock) => {
             let player;
             if (game.lobby.players.hasOwnProperty(credentials.name))
                 player = game.lobby.players[credentials.name];
-            else
-            {
-                game.lobby.addPlayer(credentials.name, false);
-                player = game.lobby.players[credentials.name];
-                game.settings.refreshPlayerTeam(player);
-            }
             if (!game.settings.ffa) {
-                console.log('game connecting');
                 let teamChannel = `${game.id}` + '_' + `${player.team.colorCode}`;
                 game.teamChannels.add(teamChannel);
                 sock.join(teamChannel);
@@ -232,15 +259,20 @@ io.on('connection', (sock) => {
         try {
             console.log(`disconnecting sock# ${sock.id}`);
             let player = lobbyService.sockets[sock.id];
-            lobbyService.removePlayer(player.name, player.lobbyId);
+            let game = lobbyService.lobbyTracker[player.lobbyId].game;
+            if (game && game.gameStarted) {
+                if (game.connections.hasOwnProperty(player.name))
+                    game.updatePlayerConnection(player.name, false);
+                else
+                    console.warn(`Player ${player.name} not found in game ${game.id}!`);
+            } else {
+                lobbyService.removePlayer(player.name, player.lobbyId);
+            }
+            let scene = game && game.gameStarted ? 'game' : 'lobby';
             io.to(`${player.lobbyId}`).emit('connect-alert', {
-                alert: `${player.name} has left the lobby.`,
+                alert: `${player.name} has left the ${scene}.`,
                 players: lobbyService.lobbyTracker[player.lobbyId].getPlayerTeams()
             });
-            let game = lobbyService.lobbyTracker[player.lobbyId].game;
-            if (game !== null && game.connections.hasOwnProperty(player.name)) {
-                game.updatePlayerConnection(player.name,false);
-            }
             delete lobbyService.sockets[sock.id];
         } catch (err) {
             console.warn('Player not found for disconnected socket.');

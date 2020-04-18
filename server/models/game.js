@@ -72,7 +72,7 @@ class Team {
     }
 
     getMembers() {
-        return Object.values(this.members);
+        return Object.keys(this.members);
     }
 
     getColor() {
@@ -236,8 +236,28 @@ class Game {
         this.autoRefresh(refreshDelay, true);
     }
 
+    loadGrid(player) {
+        let teamMembers = player.team.getMembers();
+        let grid = [];
+        for (let r = 0; r < this.matchGrid.length; r++) {
+            let newRow = [];
+            for (let c = 0; c < this.matchGrid[r].length; c++) {
+                let cell = JSON.parse(JSON.stringify(this.matchGrid[r][c]));
+                if (cell) {
+                    cell.word = (this.settings.mode === 'stealth' && !teamMembers.include(cell.player)) ?
+                        '???' : this.getWord(`item.${r}.${c}`);
+                }
+                newRow.push(cell);
+            }
+            grid.push(newRow);
+        }
+        return grid;
+    }
+
     loadOrder() {
+        this.originalPlayerList = Array.from(this.lobby.getPlayers());
         let playerTeams = this.lobby.getPlayerTeams();
+        let images = this.lobby.getImages();
         this.flippedCard = {};
         let order = [];
         this.playerDetails = {};
@@ -248,7 +268,8 @@ class Game {
                 connected: true,
                 color: color[0],
                 materializeColor: color[1],
-                textColor: color[2]
+                textColor: color[2],
+                image: images[p].toString()
             };
             if (this.settings.mode === 'frenzy') {
                 this.playerDetails[p] = details;
@@ -335,17 +356,17 @@ class Game {
         }
     }
 
-    updatePlayerConnection(player, isConnected) {
-        this.setConnection(player, isConnected);
+    updatePlayerConnection(playerName, isConnected) {
+        this.setConnection(playerName, isConnected);
         for (let turn of this.order) {
-            if (turn.player === player) {
+            if (turn.player === playerName) {
                 turn.connected = isConnected;
                 if (isConnected) {
-                    this.alert(`${player} joined the game.`);
-                    this.toastAlert(`<i class="material-icons left">check_circle</i>${player} joined the game.`, `rounded ${turn.materializeColor}`);
+                    this.alert(`${playerName} joined the game.`);
+                    this.toastAlert(`<i class="material-icons left">check_circle</i>${playerName} joined the game.`, `rounded ${turn.materializeColor}`);
                 } else {
-                    this.alert(`${player} left the game.`);
-                    this.toastAlert(`<i class="material-icons left">cancel</i>${player} left the game.`, `rounded ${turn.materializeColor}`);
+                    this.alert(`${playerName} left the game.`);
+                    this.toastAlert(`<i class="material-icons left">cancel</i>${playerName} left the game.`, `rounded ${turn.materializeColor}`);
                 }
                 if (turn.connected === false) {
                     let allDisconnected = true;
@@ -372,9 +393,28 @@ class Game {
         }
     }
 
-    updateMatchGrid(id1, id2, value = true) {
-        this.updateTile(id1, value);
-        this.updateTile(id2, value);
+    updateMatchedTiles(id1, id2, playerName, colorName) {
+        let tileState = {
+            player: playerName,
+            matched: true,
+            color: colorName
+        };
+        this.updateTile(id1, tileState);
+        this.updateTile(id2, tileState);
+    }
+
+    resetUnmatchedTiles(id1, id2) {
+        this.updateTile(id1, false);
+        this.updateTile(id2, false);
+    }
+
+    updateUnmatchedTile(id, playerName, colorName) {
+        let tileState = {
+            player: playerName,
+            matched: false,
+            color: colorName
+        };
+        this.updateTile(id, tileState);
     }
 
     updateTile(id, value) {
@@ -383,7 +423,7 @@ class Game {
             x: parseInt(coords[1]),
             y: parseInt(coords[2])
         };
-        if (this.matchGrid[tilePos.x][tilePos.y] && this.matchGrid[tilePos.x][tilePos.y].matched) {
+        if (value && value.matched && this.matchGrid[tilePos.x][tilePos.y] && this.matchGrid[tilePos.x][tilePos.y].matched) {
             throw "Pair already matched!";
         }
         this.matchGrid[tilePos.x][tilePos.y] = value;
@@ -585,7 +625,8 @@ class Game {
             let params = {
                 ffa: this.settings.ffa,
                 winners: maxScore,
-                rankings: this.settings.ffa ? this.scoreDisplay : this.teamScoreDisplay
+                rankings: this.settings.ffa ? this.scoreDisplay : this.teamScoreDisplay,
+                images: this.lobby.getImages()
             };
 
             this.io.to(`${this.id}`).emit('response-win', params);
@@ -609,8 +650,16 @@ class Game {
 }
 
 function gameEvents(sock, lobbyService) {
-    sock.on('request-refresh', () => {
-        let game = lobbyService.getLobbyFor(sock).game;
+    sock.on('request-refresh', async function() {
+        let game;
+
+        try {
+            game = lobbyService.getLobbyFor(sock).game;
+        } catch {
+            await sleep(5000);
+            sock.emit('refresh-failed');
+            return;
+        }
 
         game.refresh(sock);
     });
@@ -641,7 +690,7 @@ function gameEvents(sock, lobbyService) {
                     params.isActivePlayer = false;
                     if (params.match) {
                         try {
-                            game.updateMatchGrid(params.id, params.id2);
+                            game.updateMatchedTiles(params.id, params.id2, callingPlayer.name, params.color);
                         } catch (err) {
                             console.warn(`${callingPlayer.name} caused error: ${err}. Kicked from game as precaution.`);
                             sock.emit('dc');
@@ -654,12 +703,14 @@ function gameEvents(sock, lobbyService) {
                         game.checkWin();
                         game.disableFlip = false;
                     } else {
+                        game.resetUnmatchedTiles(params.id, params.id2, false);
                         sock.broadcast.to(`${game.id}`).emit('response-unflip',params);
                         params.isActivePlayer = true;
                         sock.emit('response-unflip', params);
                         game.endTurn();
                     }
                 } else {
+                    game.updateUnmatchedTile(params.id, callingPlayer.name, params.color);
                     game.disableFlip = false;
                 }
             }).catch(err => {
@@ -674,7 +725,7 @@ function gameEvents(sock, lobbyService) {
                     params.isActivePlayer = false;
                     if (params.match) {
                         try {
-                            game.updateMatchGrid(params.id, params.id2);
+                            game.updateMatchedTiles(params.id, params.id2, callingPlayer.name, params.color);
                         } catch (err) {
                             console.warn(`${callingPlayer.name} caused error: ${err}. Kicked from game as precaution.`);
                             sock.emit('dc');
@@ -688,6 +739,7 @@ function gameEvents(sock, lobbyService) {
                         game.disableFlip = false;
                         game.losersChoiceOnStreak = true;
                     } else {
+                        game.resetUnmatchedTiles(params.id, params.id2, false);
                         sock.broadcast.to(`${game.id}`).emit('response-unflip',params);
                         params.isActivePlayer = true;
                         sock.emit('response-unflip', params);
@@ -696,6 +748,7 @@ function gameEvents(sock, lobbyService) {
 
                     }
                 } else {
+                    game.updateUnmatchedTile(params.id, callingPlayer.name, params.color);
                     if (game.losersChoiceOnStreak) {
                         game.disableFlip = false;
                     } else {
@@ -735,7 +788,7 @@ function gameEvents(sock, lobbyService) {
                     params.isActivePlayer = false;
                     if (params.match) {
                         try {
-                            game.updateMatchGrid(params.id, params.id2);
+                            game.updateMatchedTiles(params.id, params.id2, callingPlayer.name, params.color);
                         } catch (err) {
                             console.warn(`${callingPlayer.name} caused error: ${err}. Kicked from game as precaution.`);
                             sock.emit('dc');
@@ -748,12 +801,14 @@ function gameEvents(sock, lobbyService) {
                         game.checkWin();
                         game.disableFlip = false;
                     } else {
+                        game.resetUnmatchedTiles(params.id, params.id2, false);
                         sock.broadcast.to(`${game.id}`).emit('response-unflip',params);
                         params.isActivePlayer = true;
                         sock.emit('response-unflip', params);
                         game.endTurn();
                     }
                 } else {
+                    game.updateUnmatchedTile(params.id, callingPlayer.name, params.color);
                     game.disableFlip = false;
                 }
             }).catch(err => {
@@ -770,12 +825,7 @@ function gameEvents(sock, lobbyService) {
                     params.isActivePlayer = false;
                     if (params.match) {
                         try {
-                            let tileState = {
-                                player: callingPlayer.name,
-                                matched: true,
-                                color: params.color
-                            };
-                            game.updateMatchGrid(params.id, params.id2, tileState);
+                            game.updateMatchedTiles(params.id, params.id2, callingPlayer.name, params.color);
                         } catch (err) {
                             console.warn(`${callingPlayer.name} caused error: ${err}. Kicked from game as precaution.`);
                             sock.emit('dc');
@@ -787,18 +837,13 @@ function gameEvents(sock, lobbyService) {
                         game.addScore(callingPlayer.name, params.points);
                         game.checkWin();
                     } else {
-                        game.updateMatchGrid(params.id, params.id2, false);
+                        game.resetUnmatchedTiles(params.id, params.id2, false);
                         sock.broadcast.to(`${game.id}`).emit('response-unflip',params);
                         params.isActivePlayer = true;
                         sock.emit('response-unflip', params);
                     }
                 } else {
-                    let tileState = {
-                        player: callingPlayer.name,
-                        matched: false,
-                        color: params.color
-                    };
-                    game.updateTile(params.id, tileState);
+                    game.updateUnmatchedTile(params.id, callingPlayer.name, params.color);
                     game.disableFlip = false;
                 }
             }).catch(err => {

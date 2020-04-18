@@ -9,24 +9,28 @@ html(lang='en')
         meta(name="viewport" content="width=device-width, initial-scale=1.0")
     body
         h1(class="knockout") Recall: Yorùbá Edition
-        form(action="/lobby" method="POST" class="center-form")
+        form(action="../lobby" method="POST" class="center-form")
             div(class="input-field")
                 label(for="name") Enter Your Name:
                 input(id="name" class="has-character-counter validate" name="name" autocomplete="off"
-                        data-length="15" required type="text" pattern="[\S]{1,15}")
+                        data-length="15" required type="text")
                 span(class="helper-text" data-error="Please pick a name between 1 and 15 characters with no whitespaces."
                 data-success="Username valid.") Please pick a name between 1 and 15 characters with no whitespaces.
             br
             button(class="btn waves-effect waves-light" type="submit" name="action") Join Lobby
                 i(class="material-icons right") check
+
             a(class="waves-effect waves-light btn grey modal-trigger" href="#customLobbyModal") (Or) Join Private Lobby
                 i(class="material-icons right") do_not_disturb_on
+
+            a(class="waves-effect waves-light btn yellow darken-1" href="../rejoin") (Or) Rejoin Previous Game
+                i(class="material-icons right") add
         div(id="customLobbyModal" class="modal")
             div(class="modal-content")
                 h4
                     i(class="material-icons left") do_not_disturb_on
                     div(class="col s6")
-                        form(action="/lobby" method="post")
+                        form(action="../lobby" method="post")
                             div(class="row")
                                 div(class="input-field col s12")
                                     i(class="material-icons prefix") person
@@ -60,4 +64,26 @@ html(lang='en')
             } else {
                 document.getElementById("password").type = "password";
             }
+        }
+        function rejoinGame() {
+            let name = sessionStorage.getItem('recallYorubaName');
+            let id = sessionStorage.getItem('recallYorubaId');
+            console.log(`Starting game: ${id}`);
+            let url = '../rejoin';
+            let form = document.createElement('form');
+            form.setAttribute('action', url);
+            form.setAttribute('method', 'post');
+            form.style.setProperty('display', 'none');
+            let input = document.createElement('input');
+            input.setAttribute('type', 'text');
+            input.setAttribute('name', 'gameId');
+            input.setAttribute('value', id);
+            form.insertBefore(input, null);
+            let input2 = document.createElement('input');
+            input2.setAttribute('type', 'text');
+            input2.setAttribute('name', 'name');
+            input2.setAttribute('value', name);
+            form.insertBefore(input2, null);
+            document.body.insertBefore(form, null);
+            form.submit();
         }
