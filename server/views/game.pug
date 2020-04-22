@@ -52,7 +52,7 @@ html(lang="en")
                             li
                                 a(href="javascript:toggleAudio();" class="waves-effect waves-teal btn-flat") Toggle Music
                                     audio(id="igaudio" controls style="display:none")
-                                        source(src="music/yoruba-smite.mp3" type="audio/mpeg")
+                                        source(src="audio/yoruba-smite.mp3" type="audio/mpeg")
                                     i(class="material-icons left" id="igaudioIcon") play_arrow
                             li
                                 a(onclick="toggleTileSize()" class="waves-effect waves-teal btn-flat") Toggle Tile Size
@@ -97,6 +97,9 @@ html(lang="en")
         div(id="board" class="grid-container")
         div(style="display:none" id="identifier") #{pName}
         div(style="display:none" id="playerImage") #{pImage}
+            audio(id="scoreAudio" src="audio/score.wav")
+            audio(id="showCardAudio" src="audio/flip-open.wav")
+            audio(id="hideCardAudio" src="audio/flip-close.wav")
         script(type="text/javascript" src="/socket.io/socket.io.js")
         script(type="text/javascript" src="js/game-engine.js" charset="utf-8")
         script(type="text/javascript" src="js/materialize.min.js")

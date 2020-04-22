@@ -26,7 +26,7 @@ let grid = null;
 let board = null;
 let fitScreen = true;
 let actionInProgress = false;
-const flip_front = "dw-flp__pnl dw-flp__pnl--frnt tx--white bd--white tx--center bg--dkgreen";
+const flip_front = "dw-flp__pnl dw-flp__pnl--frnt tx--white bd--white tx--center bg--dkgreen bg--card";
 const flip_back = "dw-flp__pnl dw-flp__pnl--bck bd--white tx--white tx--center bg--black";
 
 
@@ -193,10 +193,10 @@ function createGrid(size) {
             panelFlipContent.className = "dw-pnl__cntnt dw-flp__cntnt table";
             panelFlip.insertBefore(panelFlipContent, null);
             let panelFlipContent_front = document.createElement("div");
-            panelFlipContent_front.className = "dw-flp__pnl dw-flp__pnl--frnt tx--white bd--white tx--center bg--dkgreen table-cell";
+            panelFlipContent_front.className = flip_front;
             panelFlipContent.insertBefore(panelFlipContent_front, null);
             let panelFlipContent_back = document.createElement("div");
-            panelFlipContent_back.className = "dw-flp__pnl dw-flp__pnl--bck bd--white tx--white tx--center bg--black table-cell";
+            panelFlipContent_back.className = flip_back;
             panelFlipContent.insertBefore(panelFlipContent_back, null);
             let p = document.createElement('p');
             p.innerHTML = "&#7864;&#7865;&#x0301;j&#7885;&#7864;&#7865;&#x0301;j&#7885; &#7864;&#7865;&#x0301;j&#7885;&#7864;&#7865;&#x0301;j&#7885;";
@@ -239,12 +239,16 @@ function flipCard(params) {
             classes: `rounded ${color}`});
     }
 
-    if (params.frenzyEnabled === false) backPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (params.frenzyEnabled === false) {
+        backPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('showCardAudio').play();
+    }
 
     p.innerHTML = params.word;
     p.classList.remove('hide');
     contentPanel.classList.remove("dw-flp__cntnt");
     frontPanel.classList.remove("bg--green");
+    frontPanel.classList.remove("bg--card");
     frontPanel.classList.add(bgColor);
     frontPanel.insertBefore(p, null);
 
@@ -274,6 +278,7 @@ function setCard(id, params) {
     p.classList.remove('hide');
     contentPanel.classList.remove("dw-flp__cntnt");
     frontPanel.classList.remove("bg--green");
+    frontPanel.classList.remove("bg--card");
     for (let color of colors) {
         frontPanel.classList.add(color);
     }
@@ -304,6 +309,9 @@ async function match(params) {
         card1Front.classList.add(cc);
         card2Front.classList.add(cc);
     }
+    if (!params.frenzyEnabled)
+        document.getElementById('scoreAudio').play();
+
     let name = params.isActivePlayer ? 'You' : params.player;
     M.toast({html: `${name} found a match!<br>${params.team} team: +${params.points} points!`,
         classes: `rounded ${params.color}`});
@@ -321,24 +329,43 @@ async function unflip(params) {
     }
 
     await sleep(1000);
-    resetCard(params.id);
-    resetCard(params.id2);
+
+    if (params.frenzyEnabled === false)
+        document.getElementById('hideCardAudio').play();
+    
+    resetCard(params.id, true);
+    resetCard(params.id2, true);
 }
 
-async function resetCard(id) {
+async function resetCard(id, unflip = false) {
     let card = document.getElementById(id).firstElementChild;
     let cardFront = card.firstElementChild;
     let cardBack = card.lastElementChild;
+    let style;
+
     try {
         cardBack.insertBefore(cardFront.firstElementChild, null);
     } catch (err) {
         // Do nothing
     }
+
+    if (unflip) {
+        style = (' ' + card.style.transform).slice(1);
+        card.style.transform = style + ' rotateY(180deg)';
+    }
+
     cardBack.parentElement.classList.add("dw-flp__cntnt");
+    cardBack.parentElement.classList.add("bg--card");
     cardFront.className = flip_front;
     cardBack.className = flip_back;
     cardBack.firstElementChild.classList.add('hide');
     cardBack.firstElementChild.innerText = "";
+
+
+    if (unflip) {
+        await sleep(100);
+        card.style.transform = style;
+    }
 }
 
 async function nextTurn(params) {

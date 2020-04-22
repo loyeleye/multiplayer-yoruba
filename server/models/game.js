@@ -89,13 +89,6 @@ class Team {
         if (player.team === this) delete player.team;
     }
 
-    refreshDisconnectedSocks(lobbyList) {
-        for (let playerName of Object.keys(this.members)) {
-            lobbyList[playerName].team = this;
-            this.members[playerName] = lobbyList[playerName];
-        }
-    }
-
     hasMember(player) {
         return this.members.hasOwnProperty(player.name);
     }
@@ -637,10 +630,7 @@ class Game {
 
     endGame() {
         this.io.to(`${this.id}`).emit('dc');
-        lobbyService.endLobby(this.lobby.id);
-        delete this.lobby;
-        delete lobbyService.activeGames[this.id];
-        delete this.lobby.game;
+        this.lobby.endLobby();
         delete this;
     }
 }

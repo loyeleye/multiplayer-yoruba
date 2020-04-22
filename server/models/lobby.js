@@ -120,6 +120,19 @@ class Lobby {
     alert(io, msg) {
         io.to(`${this.id}`).emit('chat-alert', msg);
     }
+
+    endLobby() {
+        for (let player in this.players) {
+            try {
+                this.removePlayer(player);
+            } catch(err) {
+                console.error(`***Error in endLobby() func:\n${err}`);
+            }
+        }
+        if (this.game && lobbyServiceInstance.activeGames[this.game.id]) delete lobbyServiceInstance.activeGames[this.id];
+        delete lobbyServiceInstance.lobbyTracker[this.id];
+        delete this;
+    }
 }
 
 class Player {
@@ -233,17 +246,6 @@ class LobbyService {
 
     getPlayersFrom(lobbyId) {
         return this.lobbyTracker[lobbyId].getPlayers();
-    }
-
-    endLobby(lobbyId) {
-        for (let player in this.lobbyTracker[lobbyId].players) {
-            try {
-                this.removePlayer(player, lobbyId);
-            } catch(err) {
-                console.error(`***Error in endLobby() func:\n${err}`);
-            }
-        }
-        delete this.lobbyTracker[lobbyId];
     }
 }
 
