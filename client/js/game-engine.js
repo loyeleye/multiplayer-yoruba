@@ -363,13 +363,13 @@ async function resetCard(id, unflip = false) {
 
 
     if (unflip) {
-        await sleep(100);
+        await sleep(200);
         card.style.transform = style;
     }
 }
 
 async function nextTurn(params) {
-    const instance = M.Modal.getInstance(turnModal);
+    const instance = M.Modal.getInstance(turnMoaadal);
     turnModal.className = `modal bottom-sheet hoverable ${params.materializeColor}`;
 
     if (params.player.includes("'"))

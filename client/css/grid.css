@@ -418,7 +418,10 @@ img.dw-flp__pnl {
     height: 6vh;
 }
 .bg--image {
-    background: url("https://i.ytimg.com/vi/gjbzp1MUQrg/maxresdefault.jpg");
+    /*background: url("https://i.ytimg.com/vi/gjbzp1MUQrg/maxresdefault.jpg");*/
+    background-image: url("https://stormandsky.com/gif/14.gif");
+    background-size: 100%;
+    background-repeat: repeat-y;
 }
 .hide {
     display: none;
