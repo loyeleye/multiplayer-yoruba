@@ -666,6 +666,10 @@ function gameEvents(sock, lobbyService) {
 
         if (game.settings.mode === 'standard' || game.settings.mode === 'tutorial') {
             game.flipCardStandard(id, callingPlayer.name).then((params) => {
+                if (params.id === params.id2) {
+                    game.disableFlip = false;
+                    return;
+                }
                 sock.broadcast.to(`${game.id}`).emit('response-flip',params);
                 params.isActivePlayer = true;
                 sock.emit('response-flip', params);
@@ -704,6 +708,10 @@ function gameEvents(sock, lobbyService) {
             });
         } else if (game.settings.mode === 'losers') {
             game.flipCardLosersChoice(id, callingPlayer.name).then((params) => {
+                if (params.id === params.id2) {
+                    game.disableFlip = false;
+                    return;
+                }
                 sock.broadcast.to(`${game.id}`).emit('response-flip',params);
                 params.isActivePlayer = true;
                 sock.emit('response-flip', params);
@@ -746,6 +754,10 @@ function gameEvents(sock, lobbyService) {
             });
         } else if (game.settings.mode === 'stealth') {
             game.flipCardStandard(id, callingPlayer.name).then((params) => {
+                if (params.id === params.id2) {
+                    game.disableFlip = false;
+                    return;
+                }
                 let show = (' ' + params.word).slice(1);
                 let hide = "???";
                 if (!game.settings.ffa) {
@@ -803,6 +815,9 @@ function gameEvents(sock, lobbyService) {
         } else if (game.settings.mode === 'frenzy') {
             game.disableFlip = false;
             game.flipCardFrenzy(id, callingPlayer.name).then((params) => {
+                if (params.id === params.id2) {
+                    return;
+                }
                 game.autoRefresh(5);
                 sock.broadcast.to(`${game.id}`).emit('response-flip',params);
                 params.isActivePlayer = true;
